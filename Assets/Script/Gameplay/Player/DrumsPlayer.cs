@@ -155,6 +155,7 @@ namespace YARG.Gameplay.Player
             InitializeHitTimes();
 
             base.FinishInitialization();
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, _fiveLaneMode ? 5 : 4);
         }
 
         private int GetFillLaneForSplitView(int rightmostPad)
@@ -282,6 +283,41 @@ namespace YARG.Gameplay.Player
         protected override void InitializeSpawnedNote(IPoolable poolable, DrumNote note)
         {
             ((DrumsNoteElement) poolable).NoteRef = note;
+        }
+
+        protected override void InitializeSpawnedLane(LaneElement lane, int pad)
+        {
+            int laneIndex = pad;
+
+            Color laneColor;
+            int totalLanes;
+
+            if (_fiveLaneMode)
+            {
+                laneColor = Player.ColorProfile.FiveLaneDrums.GetNoteColor(pad).ToUnityColor();
+                totalLanes = 5;
+            }
+            else
+            {
+                laneColor = Player.ColorProfile.FourLaneDrums.GetNoteColor(pad).ToUnityColor();
+                totalLanes = 4;
+
+                if (pad >= (int) FourLaneDrumPad.YellowCymbal)
+                {
+                    laneIndex -= 3;
+                }
+            }
+
+            lane.SetAppearance(Player.Profile.CurrentInstrument, laneIndex, totalLanes, laneColor);
+        }
+
+        protected override void ModifyLaneFromNote(LaneElement lane, DrumNote note)
+        {
+            if (note.IsTremolo)
+            {
+                // Widen drum roll lanes to make them easier to see
+                lane.MultiplyScale(1.2f);
+            }
         }
 
         protected override void OnNoteHit(int index, DrumNote note)
