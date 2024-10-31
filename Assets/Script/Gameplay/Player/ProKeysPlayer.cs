@@ -432,7 +432,7 @@ namespace YARG.Gameplay.Player
                 int leftKey = Math.Min(note.Key, note.NextNote.Key);
                 int rightKey = Math.Max(note.Key, note.NextNote.Key);
                 
-                bool keysAreSameType = ProKeysUtilities.IsBlackKey(leftKey) == ProKeysUtilities.IsBlackKey(rightKey);
+                bool keysAreSameType = ProKeysUtilities.IsBlackKey(leftKey % 12) == ProKeysUtilities.IsBlackKey(rightKey % 12);
                 
                 if (!keysAreSameType && rightKey - leftKey == 1)
                 {
@@ -451,7 +451,7 @@ namespace YARG.Gameplay.Player
                 }
             }
             
-            if (ProKeysUtilities.IsWhiteKey(note.Key))
+            if (ProKeysUtilities.IsWhiteKey(note.Key % 12))
             {
                 // White notes are slightly wider than the lane
                 lane.MultiplyScale(1.25f);
