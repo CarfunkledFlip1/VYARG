@@ -230,7 +230,7 @@
             "PlayWithReplay": "Play With Replay"
         },
         "Main": {
-            "MessageOfTheDay": "<align=center><size=32><b>Welcome to v0.13!</b></size></align>\n\nv0.13 is a major update that adds Pro Keys, brings major engine improvements for all instruments, along with a ton of quality of life features, performance improvements, and more.\n\n<b>If you have any feedback, or find any bugs, please let us know on Discord or GitHub.</b>\n\nHave fun!",
+            "MessageOfTheDay": "<align=center><size=32><b>Welcome to v0.13.2!</b></size></align>\n\nv0.13.2 is a minor update with fixed Riffmaster support.\n\n<b>If you have any feedback, or find any bugs, please let us know on Discord or GitHub.</b>\n\nHave fun!",
             "Options": {
                 "Quickplay": "Quickplay",
                 "Practice": "Practice",
