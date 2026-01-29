@@ -4,6 +4,7 @@ using UnityEngine;
 using YARG.Core.Logging;
 using YARG.Core.Audio;
 using YARG.Input;
+using YARG.Settings;
 
 namespace YARG.Playback
 {
@@ -200,7 +201,6 @@ namespace YARG.Playback
         private volatile int   _syncSpeedMultiplier;
         private volatile float _syncStartDelta;
         private volatile float _syncWorstDelta;
-        private int   _counter;
 
         private readonly StemMixer _mixer;
 
@@ -265,8 +265,6 @@ namespace YARG.Playback
             double startTime,
             double startDelay,
             float songSpeed,
-            int audioCalibrationMs,
-            int videoCalibrationMs,
             double songOffset
         )
         {
@@ -277,7 +275,7 @@ namespace YARG.Playback
             _syncThread = new Thread(SyncThread) { IsBackground = true };
 
             InitializeSongTime(startTime + SongOffset, startDelay);
-            SetCalibration(audioCalibrationMs, videoCalibrationMs);
+            SetCalibration();
         }
 
         ~SongRunner()
@@ -377,13 +375,11 @@ namespace YARG.Playback
             const double INITIAL_SYNC_THRESH = 0.015;
             const double ADJUST_SYNC_THRESH = 0.005;
             const float SPEED_ADJUSTMENT = 0.05f;
-            const float WHAMMY_SYNC_INTERVAL = 1000;
 
             for (; !_disposed; Thread.Sleep(1))
             {
                 lock (_syncThread)
                 {
-                    _counter++;
                     double audioOffset = SongOffset - (AudioCalibration * SongSpeed);
 
                     SyncAudioTime = _mixer.GetPosition();
@@ -396,18 +392,12 @@ namespace YARG.Playback
 
                     if (_mixer.IsPaused)
                     {
-                        _mixer.Play(false);
+                        _mixer.Play();
                     }
 
                     if (SyncAudioTime >= _mixer.Length)
                     {
                         continue;
-                    }
-
-                    if (_counter % WHAMMY_SYNC_INTERVAL == 0)
-                    {
-                        _counter = 1;
-                        SyncWhammy();
                     }
 
                     // Account for song speed
@@ -458,18 +448,6 @@ namespace YARG.Playback
                     {
                         ResetSync();
                     }
-                }
-            }
-        }
-
-        private void SyncWhammy()
-        {
-            foreach (var channel in _mixer.Channels)
-            {
-                if (channel.GetWhammyPitch() == 0.0f)
-                {
-                    //Correct drift caused by pitch shift effect
-                    channel.SetWhammyPitch(0.0f);
                 }
             }
         }
@@ -580,7 +558,7 @@ namespace YARG.Playback
                 {
                     _mixer.SetPosition(seekTime);
                     if (!Paused)
-                        _mixer.Play(true);
+                        _mixer.Play();
                 }
 
                 UpdateTimes();
@@ -613,10 +591,15 @@ namespace YARG.Playback
 
         public void AdjustSongSpeed(float deltaSpeed) => SetSongSpeed(SongSpeed + deltaSpeed);
 
-        public void SetCalibration(int audioMs, int videoMs)
+        public void SetCalibration()
         {
-            AudioCalibration = audioMs / 1000.0;
-            VideoCalibration = videoMs / 1000.0;
+            int videoCalibrationMs = SettingsManager.Settings.VideoCalibration.Value;
+            int audioCalibrationMs = SettingsManager.Settings.AudioCalibration.Value;
+            if (SettingsManager.Settings.AccountForHardwareLatency.Value)
+                audioCalibrationMs += GlobalAudioHandler.PlaybackLatency;
+
+            AudioCalibration = audioCalibrationMs / 1000.0;
+            VideoCalibration = videoCalibrationMs / 1000.0;
             SetInputBase(InputTime);
         }
 
@@ -657,7 +640,9 @@ namespace YARG.Playback
             if (!Paused)
                 return;
 
+
             Paused = false;
+            SetCalibration();
             SetInputBaseChecked(InputTime);
 
             YargLogger.LogFormatDebug(

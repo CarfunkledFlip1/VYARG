@@ -70,6 +70,8 @@ namespace YARG.Menu.DifficultySelect
         [SerializeField]
         private DifficultyItem _difficultyRedPrefab;
         [SerializeField]
+        private DifficultyItem _difficultyItemSmallRedPrefab;
+        [SerializeField]
         private ModifierItem _modifierItemPrefab;
 
         private int _playerIndex;
@@ -82,6 +84,7 @@ namespace YARG.Menu.DifficultySelect
         private readonly List<Difficulty> _possibleDifficulties = new();
         private readonly List<Modifier>   _possibleModifiers    = new();
 
+        [NonSerialized]
         private Modifier _excusableModifiers;
 
         private int _maxHarmonyIndex = 3;
@@ -203,6 +206,19 @@ namespace YARG.Menu.DifficultySelect
             // Only show all these options if there are instruments available
             if (_possibleInstruments.Count > 0)
             {
+                // Ready button
+                CreateItem(LocalizeHeader("Ready"), _lastMenuState == State.Main, _difficultyGreenPrefab, () =>
+                {
+                    // If the player just selected vocal modifiers, don't show them again
+                    if (player.Profile.GameMode == GameMode.Vocals &&
+                        _vocalModifierSelectIndex == -1)
+                    {
+                        _vocalModifierSelectIndex = _playerIndex;
+                    }
+
+                    ChangePlayer(1);
+                });
+
                 CreateItem(LocalizeHeader("Instrument"),
                     player.Profile.CurrentInstrument.ToLocalizedName(),
                     _lastMenuState == State.Instrument, () =>
@@ -263,26 +279,13 @@ namespace YARG.Menu.DifficultySelect
                         UpdateForPlayer();
                     });
                 }
-
-                // Ready button
-                CreateItem(LocalizeHeader("Ready"), _lastMenuState == State.Main, _difficultyGreenPrefab, () =>
-                {
-                    // If the player just selected vocal modifiers, don't show them again
-                    if (player.Profile.GameMode == GameMode.Vocals &&
-                        _vocalModifierSelectIndex == -1)
-                    {
-                        _vocalModifierSelectIndex = _playerIndex;
-                    }
-
-                    ChangePlayer(1);
-                });
             }
 
             // Only show if there is more than one play, only if there is instruments available
             if (_possibleInstruments.Count <= 0 || PlayerContainer.Players.Count != 1)
             {
                 // Sit out button
-                CreateItem(LocalizeHeader("SitOut"), _possibleInstruments.Count <= 0, _difficultyRedPrefab, () =>
+                CreateItem(LocalizeHeader("SitOut"), _possibleInstruments.Count <= 0, _difficultyItemSmallRedPrefab, () =>
                 {
                     // If the user went back to sit out, and the vocal modifiers were selected,
                     // deselect them.
@@ -293,6 +296,22 @@ namespace YARG.Menu.DifficultySelect
 
                     player.SittingOut = true;
                     ChangePlayer(1);
+                });
+
+                // Disconnect button
+                CreateItem(LocalizeHeader("Disconnect"), _possibleInstruments.Count <= 0, _difficultyItemSmallRedPrefab, () =>
+                {
+                    // If the user disconnected, and the vocal modifiers were selected,
+                    // deselect them.
+                    if (_vocalModifierSelectIndex == _playerIndex)
+                    {
+                        _vocalModifierSelectIndex = -1;
+                    }
+
+                    PlayerContainer.DisposePlayer(player);
+
+                    // Since we're removing one player from the active players list, don't increment the player index.
+                    ChangePlayer(0);
                 });
             }
         }
@@ -318,7 +337,17 @@ namespace YARG.Menu.DifficultySelect
                 bool selected = CurrentPlayer.Profile.CurrentInstrument == instrument;
                 CreateItem(instrument.ToLocalizedName(), selected, () =>
                 {
+                    var preferredInstrument = CurrentPlayer.Profile.PreferredInstrument;
                     CurrentPlayer.Profile.CurrentInstrument = instrument;
+
+                    // What we are doing here is resetting preferred instrument only if the current preferred instrument
+                    // was an option for this chart. This ensures that preferred instrument does not change when the
+                    // player is forced to use a different instrument.
+                    if (instrument != preferredInstrument && _possibleInstruments.Contains(preferredInstrument))
+                    {
+                        CurrentPlayer.Profile.PreferredInstrument = instrument;
+                    }
+
                     UpdatePossibleDifficulties();
                     UpdatePossibleModifiers();
 
@@ -498,8 +527,10 @@ namespace YARG.Menu.DifficultySelect
             // Get the possible instruments for this show and player
             // TODO: We should probably allow players to select instruments that are not in
             //  all songs and have them sit out songs that don't have that instrument
+            // TODO: We should also let Ekit users choose an option that switches them between
+            // each song's native drum format
             _possibleInstruments.Clear();
-            var allowedInstruments = profile.GameMode.PossibleInstruments();
+            var allowedInstruments = profile.GameMode.PossibleInstrumentsForSong(GlobalVariables.State.CurrentSong);
 
             foreach (var instrument in allowedInstruments)
             {
@@ -517,6 +548,12 @@ namespace YARG.Menu.DifficultySelect
                 {
                     _possibleInstruments.Add(instrument);
                 }
+            }
+
+            // If the player's preferred instrument is available, set CurrentInstrument to that
+            if (_possibleInstruments.Contains(profile.PreferredInstrument))
+            {
+                profile.CurrentInstrument = profile.PreferredInstrument;
             }
 
             // Set the instrument to a valid one

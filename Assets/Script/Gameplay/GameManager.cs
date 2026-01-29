@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using YARG.Core.Audio;
@@ -22,6 +23,8 @@ using YARG.Player;
 using YARG.Replays;
 using YARG.Scores;
 using YARG.Settings;
+using YARG.Venue.Characters;
+using YARG.Venue.VenueCamera;
 
 namespace YARG.Gameplay
 {
@@ -61,6 +64,8 @@ namespace YARG.Gameplay
 
         private List<BasePlayer> _players;
 
+        public int TotalPlayers => _players.Count;
+
         public bool IsSongStarted { get; private set; } = false;
 
         private SongRunner _songRunner;
@@ -69,7 +74,10 @@ namespace YARG.Gameplay
         /// This is not initialized on awake, but rather, in
         /// <see cref="GameplayBehaviour.OnChartLoaded"/>.
         /// </remarks>
-        public BeatEventHandler BeatEventHandler { get; private set; }
+        public BeatEventHandler BeatEventHandler { get;    private set; }
+        public CrowdEventHandler CrowdEventHandler  { get; private set; }
+        public CameraManager     VenueCameraManager { get; private set; }
+        public CharacterManager  VenueCharacterManager { get; private set; }
 
         public PracticeManager  PracticeManager  { get; private set; }
         public BackgroundManager BackgroundManager { get; private set; }
@@ -105,14 +113,35 @@ namespace YARG.Gameplay
 
         public bool IsPractice      { get; private set; }
 
-        public int   BandScore { get; private set; }
-        public int   BandCombo { get; private set; }
-        public float BandStars { get; private set; }
+        public int BandScore
+        {
+            get => EngineManager.Score;
+            set => EngineManager.Score = value;
+        }
+
+        public int BandCombo
+        {
+            get => EngineManager.Combo;
+            set => EngineManager.Combo = value;
+        }
+
+        public float BandStars
+        {
+            get => EngineManager.Stars;
+            set => EngineManager.Stars = value;
+        }
+
+        public int   BandMultiplier => EngineManager.BandMultiplier;
+
+        public double FirstNoteTime { get; private set; }
+        public double LastNoteTime  { get; private set; }
 
         public ReplayInfo ReplayInfo { get; private set; }
         public ReplayData ReplayData { get; private set; }
 
         public IReadOnlyList<BasePlayer> Players => _players;
+
+        public int StarPowerActivations { get; private set; } = 0;
 
         private bool _isReplaySaved;
 
@@ -174,6 +203,10 @@ namespace YARG.Gameplay
                 Navigator.Instance.NavigationEvent -= OnNavigationEvent;
             }
 
+            // Unsubscribe from other events
+            SettingsManager.Settings.NoFailMode.OnChange -= OnNoFailModeChanged;
+            EngineManager.OnSongFailed -= OnSongFailed;
+
             //Restore stem volumes to their original state
             foreach (var (stem, state) in _stemStates)
             {
@@ -184,8 +217,8 @@ namespace YARG.Gameplay
             _pauseMenu.PopAllMenus();
             _mixer?.Dispose();
             _songRunner?.Dispose();
-            BeatEventHandler?.Audio.Unsubscribe(StarPowerClap);
             BackgroundManager.Dispose();
+            CrowdEventHandler.Dispose();
 
             // Reset the time scale back, as it would be 0 at this point (because of pausing)
             Time.timeScale = 1f;
@@ -222,6 +255,7 @@ namespace YARG.Gameplay
             // Update handlers
             _songRunner.Update();
             BeatEventHandler.Update(_songRunner.SongTime, _songRunner.VisualTime);
+            CrowdEventHandler.Update(_songRunner.SongTime);
 
             // Update players
             int totalScore = 0;
@@ -231,6 +265,7 @@ namespace YARG.Gameplay
                 player.GameplayUpdate();
 
                 totalScore += player.Score;
+                totalScore += player.BandBonusScore;
                 totalStars += player.Stars;
             }
 
@@ -258,6 +293,8 @@ namespace YARG.Gameplay
 
             BeatEventHandler.Reset();
             BackgroundManager.SetTime(_songRunner.SongTime + Song.SongOffsetSeconds);
+            VenueCameraManager?.ResetTime(time);
+            VenueCharacterManager?.ResetTime(time);
         }
 
         public void SetSongSpeed(float speed)
@@ -332,6 +369,9 @@ namespace YARG.Gameplay
             BackgroundManager.SetPaused(true);
             GameStateFetcher.SetPaused(true);
 
+            // Pause any audio samples that are currently playing
+            GlobalAudioHandler.PauseAllSfx();
+
             // Allow sleeping
             Screen.sleepTimeout = _originalSleepTimeout;
         }
@@ -361,6 +401,9 @@ namespace YARG.Gameplay
             Time.timeScale = 1f;
             BackgroundManager.SetPaused(false);
             GameStateFetcher.SetPaused(false);
+
+            // Unpause any audio samples that are currently playing
+            GlobalAudioHandler.ResumeAllSfx();
 
             // Disallow sleeping
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -453,6 +496,9 @@ namespace YARG.Gameplay
 
             RecordScores(replayInfo);
 
+            // Dispose the crowd handler
+            CrowdEventHandler.Dispose();
+
             // Go to the score screen
             GlobalVariables.Instance.LoadScene(SceneIndex.Score);
             return true;
@@ -524,6 +570,16 @@ namespace YARG.Gameplay
         {
             GlobalVariables.State = PersistentState.Default;
             GlobalVariables.Instance.LoadScene(SceneIndex.Menu);
+        }
+
+        public void SetVenueCameraManager(CameraManager cameraManager)
+        {
+            VenueCameraManager = cameraManager;
+        }
+
+        public void SetVenueCharacterManager(CharacterManager characterManager)
+        {
+            VenueCharacterManager = characterManager;
         }
 
         public void SetEditHUD(bool on)
@@ -640,21 +696,38 @@ namespace YARG.Gameplay
             BandCombo += amount;
         }
 
-        private void OnHappinessUnderThreshold()
+        private async void OnSongFailed()
         {
-            ChangeCrowdMuteState(true);
+            if (SettingsManager.Settings.NoFailMode.Value || IsPractice)
+            {
+                return;
+            }
+
+            if (!PlayerHasFailed)
+            {
+                PlayerHasFailed = true;
+                _mixer.FadeOut(SONG_END_DELAY);
+                await UniTask.Delay(TimeSpan.FromSeconds(SONG_END_DELAY));
+                GlobalAudioHandler.PlayVoxSample(VoxSample.FailSound);
+                Pause();
+            }
         }
 
-        private void OnHappinessOverThreshold()
+        // If we go from no fail to fail, we need to reinitialize the happiness state so we avoid
+        // the possibility of an instant fail. Yes, this is cheeseable since toggling no fail resets happiness.
+        private void OnNoFailModeChanged(bool noFail)
         {
-            ChangeCrowdMuteState(false);
-        }
+            // If we're going from no fail to fail and happiness would result in an insta-fail, reset happiness,
+            // but also inhibit score saving to avoid cheesing
+            if (!noFail && EngineManager.Happiness <= 0f)
+            {
+                foreach (var player in _players)
+                {
+                    player.Player.IsScoreValid = false;
+                }
 
-        private void OnSongFailed()
-        {
-            PlayerHasFailed = true;
-            GlobalAudioHandler.PlayVoxSample(VoxSample.FailSound);
-            Pause();
+                EngineManager.InitializeHappiness();
+            }
         }
     }
 }

@@ -126,6 +126,7 @@ namespace YARG.Assets.Script.Gameplay.Player
             engine.OnSoloEnd += OnSoloEnd;
 
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
+            engine.OnStarPowerPhraseMissed += OnStarPowerPhraseMissed;
             engine.OnStarPowerStatus += OnStarPowerStatus;
 
             engine.OnCountdownChange += OnCountdownChange;
@@ -313,6 +314,18 @@ namespace YARG.Assets.Script.Gameplay.Player
             return false;
         }
 
+        protected override void OnInputQueued(GameInput input)
+        {
+            base.OnInputQueued(input);
+
+            // Update the whammy factor
+            if (_sustainCount > 0 && input.GetAction<ProKeysAction>() == ProKeysAction.TouchEffects)
+            {
+                WhammyFactor = Mathf.Clamp01(input.Axis);
+                GameManager.ChangeStemWhammyPitch(_stem, WhammyFactor);
+            }
+        }
+
         protected override void InitializeSpawnedNote(IPoolable poolable, GuitarNote note)
         {
             ((FiveLaneKeysNoteElement) poolable).NoteRef = note;
@@ -382,6 +395,23 @@ namespace YARG.Assets.Script.Gameplay.Player
             {
                 _fretArray.SetSustained((int) note.FiveLaneKeysAction, false);
             }
+
+            _sustainCount--;
+
+            if (_sustainCount == 0)
+            {
+                WhammyFactor = 0;
+                GameManager.ChangeStemWhammyPitch(_stem, 0);
+            }
+        }
+
+        protected override void OnStarPowerPhraseMissed()
+        {
+            base.OnStarPowerPhraseMissed();
+            foreach (var note in NotePool.AllSpawned)
+            {
+                (note as FiveLaneKeysNoteElement)?.OnStarPowerUpdated();
+            }
         }
 
         public override (ReplayFrame Frame, ReplayStats Stats) ConstructReplayData()
@@ -413,7 +443,7 @@ namespace YARG.Assets.Script.Gameplay.Player
             }
 
             // Now that we know there is at least one range shift, figure out if it is after the first note
-            if (_allRangeShiftEvents[0].Time > Notes[0].Time)
+            if (Notes.Count > 0 && _allRangeShiftEvents[0].Time > Notes[0].Time)
             {
                 firstShiftAfterFirstNote = true;
             }

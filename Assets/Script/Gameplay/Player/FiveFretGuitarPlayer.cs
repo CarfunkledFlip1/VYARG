@@ -135,6 +135,7 @@ namespace YARG.Gameplay.Player
             engine.OnSoloEnd += OnSoloEnd;
 
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
+            engine.OnStarPowerPhraseMissed += OnStarPowerPhraseMissed;
             engine.OnStarPowerStatus += OnStarPowerStatus;
 
             engine.OnCountdownChange += OnCountdownChange;
@@ -482,6 +483,15 @@ namespace YARG.Gameplay.Player
             }
         }
 
+        protected override void OnStarPowerPhraseMissed()
+        {
+            base.OnStarPowerPhraseMissed();
+            foreach (var note in NotePool.AllSpawned)
+            {
+                (note as FiveFretGuitarNoteElement)?.OnStarPowerUpdated();
+            }
+        }
+
         protected override bool InterceptInput(ref GameInput input)
         {
             // Ignore SP in practice mode
@@ -523,7 +533,7 @@ namespace YARG.Gameplay.Player
             }
 
             // Now that we know there is at least one range shift, figure out if it is after the first note
-            if (_allRangeShiftEvents[0].Time > Notes[0].Time)
+            if (Notes.Count > 0 && _allRangeShiftEvents[0].Time > Notes[0].Time)
             {
                 firstShiftAfterFirstNote = true;
             }

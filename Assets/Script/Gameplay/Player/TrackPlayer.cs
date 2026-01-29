@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using YARG.Assets.Script.Helpers;
 using YARG.Core;
 using YARG.Core.Audio;
@@ -24,7 +23,9 @@ namespace YARG.Gameplay.Player
         public const float DEFAULT_ZERO_FADE_POS = 3f;
         public const float NOTE_SPAWN_OFFSET     = 5f;
 
-        public const float TRACK_WIDTH = 2f;
+        public const float TRACK_WIDTH  = 2f;
+
+        public static int HighwayCount = 1;
 
         public double SpawnTimeOffset => (ZeroFadePosition + _spawnAheadDelay + -STRIKE_LINE_POS) / NoteSpeed;
 
@@ -67,7 +68,9 @@ namespace YARG.Gameplay.Player
         public float ZeroFadePosition { get; private set; }
         public float FadeSize         { get; private set; }
 
-        public Vector2 HUDViewportPosition => TrackCamera.WorldToViewportPoint(_hudLocation.position);
+        [field: Header("Star Power Trim Effect")]
+        [SerializeField]
+        protected StarPowerEffectElement StarPowerEffect;
 
         protected List<Beatline> Beatlines;
 
@@ -111,6 +114,10 @@ namespace YARG.Gameplay.Player
             var change = ZeroFadePosition - DEFAULT_ZERO_FADE_POS;
             _hudLocation.position = _hudLocation.position.AddZ(change);
 
+            // Must be done after the HUD location is set
+            StarPowerEffect.Initialize();
+            StarPowerEffect.gameObject.SetActive(false);
+
             // Determine if a track is bass or not for the BASS GROOVE text notification
             IsBass = Player.Profile.CurrentInstrument
                 is Instrument.FiveFretBass
@@ -146,7 +153,7 @@ namespace YARG.Gameplay.Player
 
         public override BaseEngine BaseEngine => Engine;
 
-        protected List<TNote> Notes { get; private set; }
+        protected List<TNote> Notes { get; set; }
 
         protected int NoteIndex { get; private set; }
 
@@ -164,6 +171,7 @@ namespace YARG.Gameplay.Player
         private double _previousStarPowerAmount;
 
         private bool _wasStarPowerActive;
+        private bool _didLowerTrack;
 
         private Queue<TrackEffect> _upcomingEffects = new();
         private List<TrackEffectElement> _currentEffects = new();
@@ -177,6 +185,17 @@ namespace YARG.Gameplay.Player
             if (IsInitialized)
             {
                 return;
+            }
+
+            // Get player count
+            if (index == 0)
+            {
+                // Reset
+                HighwayCount = 1;
+            }
+            else if (index + 1 > HighwayCount)
+            {
+                HighwayCount = index + 1;
             }
 
             // Consolidate tracks into a parent object for animation purposes
@@ -330,6 +349,9 @@ namespace YARG.Gameplay.Player
 
         protected override void UpdateVisuals(double visualTime)
         {
+            // Allow the HUD to track the highway with animations
+            TrackView.UpdateHUDPosition(HighwayIndex, HighwayCount);
+
             UpdateNotes(visualTime);
             UpdateBeatlines(visualTime);
             UpdateTrackEffects(visualTime);
@@ -352,7 +374,13 @@ namespace YARG.Gameplay.Player
             TrackMaterial.GrooveMode = groove;
             TrackMaterial.StarpowerMode = stats.IsStarPowerActive;
 
-            ComboMeter.SetCombo(stats.ScoreMultiplier, maxMultiplier, stats.Combo);
+            // In multiplayer, don't double the score multiplier in the strikeline element
+            // Otherwise, it looks like the band multiplier applies on top of the score multiplier
+            int displayMultiplier = GameManager.TotalPlayers > 1 && stats.IsStarPowerActive
+                ? stats.ScoreMultiplier / 2
+                : stats.ScoreMultiplier;
+
+            ComboMeter.SetCombo(stats.ScoreMultiplier, displayMultiplier, maxMultiplier, stats.Combo);
             StarpowerBar.SetStarpower(currentStarPowerAmount, stats.IsStarPowerActive);
             StarpowerBar.UpdateFlash(GameManager.BeatEventHandler.Visual.StrongBeat.CurrentPercentage);
             SunburstEffects.SetSunburstEffects(groove, stats.IsStarPowerActive, _currentMultiplier);
@@ -386,7 +414,7 @@ namespace YARG.Gameplay.Player
                 TrackView.ShowStarPowerReady();
             }
 
-            if (stats.IsStarPowerActive && !_wasStarPowerActive)
+            if (stats.IsStarPowerActive && !_wasStarPowerActive && !_didLowerTrack)
             {
                 CameraPositioner.Scoop();
             }
@@ -399,9 +427,12 @@ namespace YARG.Gameplay.Player
                 haptics.SetStarPowerFill((float) currentStarPowerAmount);
             }
 
-            if (visualTime > SongLength)
+            bool isSongEnd = visualTime > SongLength;
+            bool shouldLowerTrack = isSongEnd || GameManager.PlayerHasFailed;
+            if (!_didLowerTrack && shouldLowerTrack)
             {
-                CameraPositioner.Lower(true);
+                _didLowerTrack = true;
+                CameraPositioner.Lower(isSongEnd);
             }
         }
 
@@ -938,8 +969,19 @@ namespace YARG.Gameplay.Player
             TrackView.UpdateCountdown(countdownLength, endTime);
         }
 
+        protected virtual void OnStarPowerPhraseMissed(TNote note)
+        {
+            OnStarPowerPhraseMissed();
+        }
+
         protected virtual void OnStarPowerPhraseHit(TNote note)
         {
+            if (SettingsManager.Settings.EnableTrackEffects.Value)
+            {
+                StarPowerEffect.gameObject.SetActive(true);
+                StarPowerEffect.PlayAnimation();
+            }
+
             OnStarPowerPhraseHit();
         }
 
