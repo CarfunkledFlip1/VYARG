@@ -361,6 +361,18 @@ namespace YARG.Gameplay.Player
                 Player.ColorProfile.FiveFretGuitar.GetNoteColor(colorIndex).ToUnityColor());
         }
 
+        protected override void ModifyLaneFromNote(LaneElement lane, GuitarNote note)
+        {
+            if (note.Fret == (int) FiveFretGuitarFret.Open)
+            {
+                lane.ToggleOpen(true);
+            }
+            else
+            {
+                lane.MultiplyScale(0.85f);
+            }
+        }
+
         protected override void OnNoteHit(int index, GuitarNote chordParent)
         {
             base.OnNoteHit(index, chordParent);
