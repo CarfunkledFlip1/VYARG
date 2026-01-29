@@ -82,6 +82,8 @@ namespace YARG.Gameplay.Player
 
         protected float SongLength;
 
+        protected LaneElement[] BRELanes;
+
         public virtual void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView,
             StemMixer mixer, int? lastHighScore)
         {
@@ -576,6 +578,14 @@ namespace YARG.Gameplay.Player
 
         private void SpawnEffect(TrackEffect nextEffect, bool seeking)
         {
+            // TODO: Think of a better way to handle BREs that doesn't involve the track effect stuff
+            if (nextEffect.EffectType == TrackEffectType.BigRockEnding)
+            {
+                StartBRE(nextEffect.Time, nextEffect.TimeEnd);
+                _upcomingEffects.Dequeue();
+                return;
+            }
+
             var poolable = EffectPool.TakeWithoutEnabling();
             if (poolable == null)
             {
@@ -645,6 +655,27 @@ namespace YARG.Gameplay.Player
             poolable.EnableFromPool();
         }
 
+        private void StartBRE(double timeStart, double timeEnd)
+        {
+            RescaleLanesForBRE();
+
+            if (!LanePool.CanSpawnAmount(BRELanes.Length))
+            {
+                return;
+            }
+
+            for (int i = 0; i < BRELanes.Length; i++)
+            {
+                var newLane = (LaneElement) LanePool.TakeWithoutEnabling();
+
+                newLane.SetTimeRange(timeStart, timeEnd);
+                InitializeSpawnedLane(newLane, i + 1);
+                newLane.EnableFromPool();
+
+                BRELanes[i] = newLane;
+            }
+        }
+
         protected virtual void OnNoteSpawned(TNote parentNote)
         {
             SpawnLanesFromNote(parentNote);
@@ -656,7 +687,7 @@ namespace YARG.Gameplay.Player
             {
                 return;
             }
-            
+
             if (!LanePool.CanSpawnAmount(1))
             {
                 return;
@@ -676,7 +707,7 @@ namespace YARG.Gameplay.Player
             {
                 var laneStartNotes = new Dictionary<int, TNote>();
                 var laneEndTimes = new Dictionary<int, double>();
-                
+
                 // Iterate forward to find the length of all lanes in this phrase
                 var noteRef = parentNote;
                 var thisLaneFlag = parentNote.IsTrill ? NoteFlags.Trill : NoteFlags.Tremolo;
@@ -706,12 +737,12 @@ namespace YARG.Gameplay.Player
                             }
                         }
                     }
-                    
+
                     if (containsLaneEnd)
                     {
                         break;
                     }
-                    
+
                     noteRef = noteRef.NextNote;
                 }
 
@@ -722,7 +753,7 @@ namespace YARG.Gameplay.Player
                         // Ending note was not found, do not create lane
                         continue;
                     }
-                    
+
                     var firstLaneNote = laneStartNotes[laneIndex];
                     double startTime = firstLaneNote.Time;
                     double endTime = laneEndTimes[laneIndex];
@@ -869,6 +900,8 @@ namespace YARG.Gameplay.Player
         protected abstract void InitializeSpawnedNote(IPoolable poolable, TNote note);
         protected abstract void InitializeSpawnedLane(LaneElement lane, int index);
         protected virtual void ModifyLaneFromNote(LaneElement lane, TNote note) {}
+
+        protected abstract void RescaleLanesForBRE();
 
         protected virtual void OnNoteHit(int index, TNote note)
         {

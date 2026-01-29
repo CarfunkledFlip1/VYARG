@@ -353,6 +353,11 @@ namespace YARG.Assets.Script.Gameplay.Player
                 Player.ColorProfile.FiveFretGuitar.GetNoteColor(colorIndex).ToUnityColor());
         }
 
+        protected override void RescaleLanesForBRE()
+        {
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 5, true);
+        }
+
         protected override void OnNoteHit(int index, GuitarNote note)
         {
             base.OnNoteHit(index, note);
