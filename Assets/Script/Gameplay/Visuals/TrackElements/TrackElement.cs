@@ -29,30 +29,30 @@ namespace YARG.Gameplay.Visuals
             base.GameplayAwake();
         }
 
-        private void Start()
-        {
-            // Get fade info
-            float fadePos = Player.ZeroFadePosition;
-            float fadeSize = Player.FadeSize;
-
-            // Set all fade values for meshes
-            var meshRenderers = GetComponentsInChildren<MeshRenderer>(true);
-            foreach (var meshRenderer in meshRenderers)
-            {
-                foreach (var material in meshRenderer.materials)
-                {
-                    material.SetFade(fadePos, fadeSize);
-                }
-            }
-
-            // Set all fade values for note flares
-            var noteFlares = GetComponentsInChildren<NoteFlare>(true);
-            foreach (var noteFlare in noteFlares)
-            {
-                noteFlare.TrackPlayer = Player;
-                noteFlare.SetFade(fadePos, fadeSize);
-            }
-        }
+        // private void Start()
+        // {
+        //     // Get fade info
+        //     float fadePos = Player.ZeroFadePosition;
+        //     float fadeSize = Player.FadeSize;
+        //
+        //     // Set all fade values for meshes
+        //     var meshRenderers = GetComponentsInChildren<MeshRenderer>(true);
+        //     foreach (var meshRenderer in meshRenderers)
+        //     {
+        //         foreach (var material in meshRenderer.materials)
+        //         {
+        //             material.SetFade(fadePos, fadeSize);
+        //         }
+        //     }
+        //
+        //     // Set all fade values for note flares
+        //     var noteFlares = GetComponentsInChildren<NoteFlare>(true);
+        //     foreach (var noteFlare in noteFlares)
+        //     {
+        //         noteFlare.TrackPlayer = Player;
+        //         noteFlare.SetFade(fadePos, fadeSize);
+        //     }
+        // }
 
         protected float GetZPositionAtTime(double time)
         {
@@ -60,7 +60,7 @@ namespace YARG.Gameplay.Visuals
             // critical areas such as the game manager and players
 
             return TrackPlayer.STRIKE_LINE_POS                          // Shift origin to the strike line
-                + (float) (time - GameManager.RealVisualTime) // Get time of note relative to now
+                + (float) (time - GameManager.VisualTime) // Get time of note relative to now
                 * Player.NoteSpeed;                                  // Adjust speed (units/s)
         }
 

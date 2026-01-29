@@ -8,17 +8,22 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Lane
-  m_Shader: {fileID: -6465566751694194690, guid: 0c474304b74472f4a8b212da29713486,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0c474304b74472f4a8b212da29713486, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _EMISSION_DISABLED
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2951
-  stringTagMap: {}
-  disabledShaderPasses: []
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -102,6 +107,7 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 0
     - _BumpScale: 1
+    - _CastShadows: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -126,6 +132,7 @@ Material:
     - _PrimaryFrequency: 10
     - _QueueControl: 0
     - _QueueOffset: -49
+    - _RAISE_Z: 0
     - _ReceiveShadows: 1
     - _SHINE: 0
     - _SecondaryAmplitude: 0.47380185
@@ -139,13 +146,16 @@ Material:
     - _Surface: 1
     - _TertiaryAmplitude: 0.07968688
     - _WorkflowMode: 1
-    - _ZWrite: 0
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 0.011764707, b: 0, a: 1}
     - _EmissionColor: {r: 1, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &3472690068137638158
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -158,4 +168,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 10

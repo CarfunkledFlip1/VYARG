@@ -15,13 +15,13 @@ namespace YARG.Gameplay.Visuals
 
         // Conversion rate from end cap bone movement units to 1 TrackElement.GetZPositionAtTime unit
         private const float LANE_LENGTH_RATIO = 0.02f;
-        
+
         private const float OPEN_LANE_SCALE = 0.5f;
         private const float OPEN_LANE_START_TIME_OFFSET = 0.05f;
 
         private static readonly int _emissionEnabled = Shader.PropertyToID("_Emission");
         private static readonly int _emissionColor = Shader.PropertyToID("_EmissionColor");
-        
+
         private static Dictionary<Instrument,float> _scaleByInstrument = new();
 
         public static void DefineLaneScale(Instrument instrument, int subdivisions)
@@ -30,7 +30,7 @@ namespace YARG.Gameplay.Visuals
             {
                 return;
             }
-            
+
             float laneScaleX = TrackPlayer.TRACK_WIDTH / subdivisions;
             _scaleByInstrument.Add(instrument, laneScaleX);
         }
@@ -96,7 +96,7 @@ namespace YARG.Gameplay.Visuals
         {
             _startTime = startTime;
             EndTime = endTime;
-            
+
             _zLength = GetZPositionAtTime(endTime) - GetZPositionAtTime(startTime);
 
             if (Initialized)
@@ -188,8 +188,6 @@ namespace YARG.Gameplay.Visuals
             {
                 var thisMaterial = _meshRenderer.materials[i];
 
-                thisMaterial.SetFade(Player.ZeroFadePosition, Player.FadeSize);
-
                 if (i == 0)
                 {
                     // Set color
@@ -217,7 +215,7 @@ namespace YARG.Gameplay.Visuals
         {
             // Set scale
             _meshTransform.localScale = new Vector3(_scale, 1f, _scale);
-            
+
             // Recalculate length from new scale
             RenderLength();
         }
@@ -230,7 +228,7 @@ namespace YARG.Gameplay.Visuals
             if (_isOpen == true)
             {
                 SetXPosition(0);
-                
+
                 SetTimeRange(_startTime - OPEN_LANE_START_TIME_OFFSET, EndTime);
 
                 _scale = OPEN_LANE_SCALE;

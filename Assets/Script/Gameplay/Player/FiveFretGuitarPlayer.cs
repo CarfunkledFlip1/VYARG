@@ -12,6 +12,7 @@ using YARG.Core.Replays;
 using YARG.Gameplay.HUD;
 using YARG.Gameplay.Visuals;
 using YARG.Helpers;
+using YARG.Helpers.Extensions;
 using YARG.Playback;
 using YARG.Player;
 using YARG.Settings;
@@ -166,6 +167,8 @@ namespace YARG.Gameplay.Player
                 _allRangeShiftEvents = FiveFretRangeShift.GetRangeShiftEvents(NoteTrack);
                 InitializeRangeShift();
             }
+
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 5);
 
             GameManager.BeatEventHandler.Visual.Subscribe(_fretArray.PulseFretColors, BeatEventType.StrongBeat);
         }
@@ -337,6 +340,25 @@ namespace YARG.Gameplay.Player
         protected override void InitializeSpawnedNote(IPoolable poolable, GuitarNote note)
         {
             ((FiveFretGuitarNoteElement) poolable).NoteRef = note;
+        }
+
+        protected override int GetLaneIndex(GuitarNote note)
+        {
+            return note.Fret;
+        }
+
+        protected override void InitializeSpawnedLane(LaneElement lane, int fret)
+        {
+            var colorIndex = fret;
+            // Handle lefty flip
+            if (Player.Profile.LeftyFlip)
+            {
+                // 6 because 1 indexed, not zero
+                colorIndex = 6 - fret;
+            }
+
+            lane.SetAppearance(Player.Profile.CurrentInstrument, fret, 5,
+                Player.ColorProfile.FiveFretGuitar.GetNoteColor(colorIndex).ToUnityColor());
         }
 
         protected override void OnNoteHit(int index, GuitarNote chordParent)
