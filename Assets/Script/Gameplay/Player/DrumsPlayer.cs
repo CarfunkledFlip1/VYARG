@@ -301,14 +301,13 @@ namespace YARG.Gameplay.Player
 
         protected override int GetLaneIndex(DrumNote note)
         {
-            int laneIndex = note.Pad;
-
-            if (!_fiveLaneMode && laneIndex >= (int) FourLaneDrumPad.YellowCymbal)
+            if (Player.Profile.SplitProTomsAndCymbals &&
+                EngineParams.Mode == DrumsEngineParameters.DrumMode.ProFourLane)
             {
-                laneIndex -= 3;
+                return GetSplitIndex(note.Pad);
             }
 
-            return laneIndex;
+            return GetFret(note.Pad);
         }
 
         protected override void InitializeSpawnedLane(LaneElement lane, int index)
@@ -316,7 +315,13 @@ namespace YARG.Gameplay.Player
             Color laneColor;
             int totalLanes;
 
-            if (_fiveLaneMode)
+            if (Player.Profile.SplitProTomsAndCymbals && EngineParams.Mode == DrumsEngineParameters.DrumMode.ProFourLane)
+            {
+                totalLanes = 7;
+                var pad = GetPadFromFret(index);
+                laneColor = Player.ColorProfile.FourLaneDrums.GetNoteColor(pad).ToUnityColor();
+            }
+            else if (_fiveLaneMode)
             {
                 laneColor = Player.ColorProfile.FiveLaneDrums.GetNoteColor(index).ToUnityColor();
                 totalLanes = 5;
@@ -328,7 +333,7 @@ namespace YARG.Gameplay.Player
             }
 
             lane.SetAppearance(Player.Profile.CurrentInstrument, index, totalLanes, laneColor);
-            
+
         }
 
         protected override void ModifyLaneFromNote(LaneElement lane, DrumNote note)
@@ -805,6 +810,78 @@ namespace YARG.Gameplay.Player
                 FourLaneDrumPad.GreenCymbal  => 5,
                 FourLaneDrumPad.GreenDrum    => 6,
                 _                            => -1,
+            };
+        }
+
+        private int GetSplitIndex(int pad)
+        {
+            return (FourLaneDrumPad) pad switch
+            {
+                FourLaneDrumPad.RedDrum      => ShouldSwapSnareAndHiHat() ? 2 : 1,
+                FourLaneDrumPad.YellowCymbal => ShouldSwapSnareAndHiHat() ? 1 : 2,
+                FourLaneDrumPad.YellowDrum   => 3,
+                FourLaneDrumPad.BlueCymbal   => 4,
+                FourLaneDrumPad.BlueDrum     => 5,
+                FourLaneDrumPad.GreenCymbal  => ShouldSwapCrashAndRide() ? 7 : 6,
+                FourLaneDrumPad.GreenDrum    => ShouldSwapCrashAndRide() ? 6 : 7,
+                _                            => -1,
+            };
+        }
+
+        private int GetPadFromFret(int fret)
+        {
+            if (_fiveLaneMode)
+            {
+                return GetFiveLanePad(fret);
+            }
+
+            if (Player.Profile.SplitProTomsAndCymbals
+                && EngineParams.Mode == DrumsEngineParameters.DrumMode.ProFourLane)
+            {
+                return GetSplitPad(fret);
+            }
+
+            return GetFourLanePad(fret);
+        }
+
+        // This conversion is ambiguous, but since we only care about color it doesn't matter
+        private static int GetFourLanePad(int fret)
+        {
+            return fret switch
+            {
+                0 => (int) FourLaneDrumPad.RedDrum,
+                1 => (int) FourLaneDrumPad.YellowDrum,
+                2 => (int) FourLaneDrumPad.BlueDrum,
+                3 => (int) FourLaneDrumPad.GreenDrum,
+                _ => -1
+            };
+        }
+
+        private static int GetFiveLanePad(int fret)
+        {
+            return fret switch
+            {
+                0 => (int) FiveLaneDrumPad.Red,
+                1 => (int) FiveLaneDrumPad.Yellow,
+                2 => (int) FiveLaneDrumPad.Blue,
+                3 => (int) FiveLaneDrumPad.Orange,
+                4 => (int) FiveLaneDrumPad.Green,
+                _ => -1
+            };
+        }
+
+        private int GetSplitPad(int index)
+        {
+            return index switch
+            {
+                0 => (int) FourLaneDrumPad.RedDrum,
+                1 => (int) FourLaneDrumPad.YellowCymbal,
+                2 => (int) FourLaneDrumPad.YellowDrum,
+                3 => (int) FourLaneDrumPad.BlueCymbal,
+                4 => (int) FourLaneDrumPad.BlueDrum,
+                5 => (int) FourLaneDrumPad.GreenCymbal,
+                6 => (int) FourLaneDrumPad.GreenDrum,
+                _ => -1
             };
         }
     }
