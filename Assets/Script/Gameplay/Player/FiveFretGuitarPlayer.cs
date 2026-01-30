@@ -344,6 +344,13 @@ namespace YARG.Gameplay.Player
 
         protected override int GetLaneIndex(GuitarNote note)
         {
+            // Handle lefty flip
+            if (Player.Profile.LeftyFlip)
+            {
+                // 6 because 1 indexed, not zero
+                return 6 - note.Fret;
+            }
+
             return note.Fret;
         }
 

@@ -299,15 +299,33 @@ namespace YARG.Gameplay.Player
             ((DrumsNoteElement) poolable).NoteRef = note;
         }
 
+        // protected override int GetLaneIndex(DrumNote note)
+        // {
+        //     if (Player.Profile.SplitProTomsAndCymbals &&
+        //         EngineParams.Mode == DrumsEngineParameters.DrumMode.ProFourLane)
+        //     {
+        //         return GetSplitIndex(note.Pad);
+        //     }
+        //
+        //     return GetFret(note.Pad);
+        // }
+
         protected override int GetLaneIndex(DrumNote note)
         {
-            if (Player.Profile.SplitProTomsAndCymbals &&
-                EngineParams.Mode == DrumsEngineParameters.DrumMode.ProFourLane)
+            int laneIndex = note.Pad;
+
+            if (!_fiveLaneMode && laneIndex >= (int) FourLaneDrumPad.YellowCymbal)
             {
-                return GetSplitIndex(note.Pad);
+                laneIndex -= 3;
             }
 
-            return GetFret(note.Pad);
+            // Hope this works for five lane, too
+            if (Player.Profile.LeftyFlip)
+            {
+                laneIndex = _fiveLaneMode ? 6 - laneIndex : 5 - laneIndex;
+            }
+
+            return laneIndex;
         }
 
         protected override void InitializeSpawnedLane(LaneElement lane, int index)
