@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: OpenNote
-  m_Shader: {fileID: -6465566751694194690, guid: 0c474304b74472f4a8b212da29713486,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: d0287f22867bc5f45b56747bb8ac32ba, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -31,9 +30,8 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -118,16 +116,20 @@ Material:
     - _DstBlendAlpha: 0
     - _EMISSION: 0
     - _EnvironmentReflections: 1
+    - _FadeDistance: 0.2
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
     - _Metallic: 0.2
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OpenFadeAmount: 0.025
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RAISE_Z: 0
+    - _RandomFloat: 0
+    - _RandomizeTexture: 0
     - _ReceiveShadows: 1
     - _SHINE: 0
     - _ShineAmount: 0
@@ -142,6 +144,7 @@ Material:
     - _ZTest: 4
     - _ZWrite: 1
     - _ZWriteControl: 1
+    - _vFlip: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Base_Color: {r: 1, g: 1, b: 1, a: 1}
