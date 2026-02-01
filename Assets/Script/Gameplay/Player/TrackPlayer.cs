@@ -652,11 +652,11 @@ namespace YARG.Gameplay.Player
 
         private void SpawnLanesFromNote(TNote parentNote)
         {
-            if (!Engine.LanesExist)
+            if (!Engine.LanesExist || !Engine.BaseParameters.EnableLanes)
             {
                 return;
             }
-            
+
             if (!LanePool.CanSpawnAmount(1))
             {
                 return;
@@ -676,7 +676,7 @@ namespace YARG.Gameplay.Player
             {
                 var laneStartNotes = new Dictionary<int, TNote>();
                 var laneEndTimes = new Dictionary<int, double>();
-                
+
                 // Iterate forward to find the length of all lanes in this phrase
                 var noteRef = parentNote;
                 var thisLaneFlag = parentNote.IsTrill ? NoteFlags.Trill : NoteFlags.Tremolo;
@@ -706,12 +706,12 @@ namespace YARG.Gameplay.Player
                             }
                         }
                     }
-                    
+
                     if (containsLaneEnd)
                     {
                         break;
                     }
-                    
+
                     noteRef = noteRef.NextNote;
                 }
 
@@ -722,7 +722,7 @@ namespace YARG.Gameplay.Player
                         // Ending note was not found, do not create lane
                         continue;
                     }
-                    
+
                     var firstLaneNote = laneStartNotes[laneIndex];
                     double startTime = firstLaneNote.Time;
                     double endTime = laneEndTimes[laneIndex];
