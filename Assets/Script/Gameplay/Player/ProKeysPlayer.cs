@@ -165,7 +165,7 @@ namespace YARG.Gameplay.Player
                 _rangeShiftIndex++;
             }
 
-            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, WHITE_KEY_VISIBLE_COUNT); //
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, WHITE_KEY_VISIBLE_COUNT);
         }
 
         public override void ResetPracticeSection()
@@ -472,12 +472,6 @@ namespace YARG.Gameplay.Player
             lane.OffsetXPosition(_currentOffset);
         }
 
-        protected override void RescaleLanesForBRE()
-        {
-            // TODO: This is wrong, it's just here to have *something*
-            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 4, true);
-        }
-
         protected override void ModifyLaneFromNote(LaneElement lane, ProKeysNote note)
         {
             if (note.IsTrill && note.NextNote != null)
@@ -492,8 +486,10 @@ namespace YARG.Gameplay.Player
                 {
                     lane.SetIndexRange(leftKey, rightKey);
 
-                    float leftKeyPosition = GetNoteX(leftKey);
-                    lane.SetXPosition(leftKeyPosition + (GetNoteX(rightKey) - leftKeyPosition)/2);
+                    var leftKeyPosition = _keysArray.GetKeyX(leftKey);
+                    var rightKeyPosition = _keysArray.GetKeyX(rightKey);
+
+                    lane.SetXPosition(leftKeyPosition + (rightKeyPosition - leftKeyPosition) / 2);
                     lane.MultiplyScale(1.75f);
 
                     return;
@@ -510,6 +506,12 @@ namespace YARG.Gameplay.Player
                 // White notes are slightly wider than the lane
                 lane.MultiplyScale(1.25f);
             }
+        }
+
+        protected override void RescaleLanesForBRE()
+        {
+            // TODO: This is wrong, it's just here to have *something*
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 4, true);
         }
 
         protected override void OnNoteSpawned(ProKeysNote parentNote)

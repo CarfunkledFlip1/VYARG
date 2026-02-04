@@ -344,6 +344,13 @@ namespace YARG.Gameplay.Player
 
         protected override int GetLaneIndex(GuitarNote note)
         {
+            // Handle lefty flip
+            if (Player.Profile.LeftyFlip)
+            {
+                // 6 because 1 indexed, not zero
+                return 6 - note.Fret;
+            }
+
             return note.Fret;
         }
 
@@ -371,11 +378,6 @@ namespace YARG.Gameplay.Player
             {
                 lane.MultiplyScale(0.85f);
             }
-        }
-
-        protected override void RescaleLanesForBRE()
-        {
-            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 5, true);
         }
 
         protected override void OnNoteHit(int index, GuitarNote chordParent)

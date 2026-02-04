@@ -336,6 +336,13 @@ namespace YARG.Assets.Script.Gameplay.Player
 
         protected override int GetLaneIndex(GuitarNote note)
         {
+            // Handle lefty flip
+            if (Player.Profile.LeftyFlip)
+            {
+                // 6 because 1 indexed, not zero
+                return 6 - note.Fret;
+            }
+
             return note.Fret;
         }
 
@@ -351,6 +358,18 @@ namespace YARG.Assets.Script.Gameplay.Player
 
             lane.SetAppearance(Player.Profile.CurrentInstrument, fret, 5,
                 Player.ColorProfile.FiveFretGuitar.GetNoteColor(colorIndex).ToUnityColor());
+        }
+
+        protected override void ModifyLaneFromNote(LaneElement lane, GuitarNote note)
+        {
+            if (note.Fret == (int) FiveFretGuitarFret.Open)
+            {
+                lane.ToggleOpen(true);
+            }
+            else
+            {
+                lane.MultiplyScale(0.85f);
+            }
         }
 
         protected override void RescaleLanesForBRE()
