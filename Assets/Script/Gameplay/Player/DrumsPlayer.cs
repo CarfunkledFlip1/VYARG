@@ -456,6 +456,23 @@ namespace YARG.Gameplay.Player
             }
         }
 
+        protected override void RescaleLanesForBRE()
+        {
+            int subdivisions = 4;
+
+            if (_fiveLaneMode)
+            {
+                subdivisions = 5;
+            }
+            else if (IsSplitMode)
+            {
+                // Maybe this should still be 4....
+                subdivisions = 7;
+            }
+
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, subdivisions, true);
+        }
+
         protected override void OnNoteHit(int index, DrumNote note)
         {
             base.OnNoteHit(index, note);
