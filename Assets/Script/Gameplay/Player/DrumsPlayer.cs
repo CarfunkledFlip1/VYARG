@@ -5,6 +5,7 @@ using UnityEngine;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
+using YARG.Core.Engine;
 using YARG.Core.Engine.Drums;
 using YARG.Core.Engine.Drums.Engines;
 using YARG.Core.Game;
@@ -55,6 +56,8 @@ namespace YARG.Gameplay.Player
         {
             // Before we do anything, see if we're in five lane mode or not
             _fiveLaneMode = player.Profile.CurrentInstrument == Instrument.FiveLaneDrums;
+            // TODO: Fix this for split mode
+            BRELanes = new LaneElement[_fiveLaneMode ? 5 : 4];
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
         }
 
@@ -104,6 +107,9 @@ namespace YARG.Gameplay.Player
 
             engine.OnSoloStart += OnSoloStart;
             engine.OnSoloEnd += OnSoloEnd;
+
+            engine.OnCodaStart += OnCodaStart;
+            engine.OnCodaEnd += OnCodaEnd;
 
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
             engine.OnStarPowerPhraseMissed += OnStarPowerPhraseMissed;
@@ -523,8 +529,34 @@ namespace YARG.Gameplay.Player
             }
         }
 
+        private void OnLaneHit(int fret)
+        {
+            _fretArray.PlayCodaHitAnimation(fret);
+        }
+
+        protected override void OnCodaStart(CodaSection coda)
+        {
+            base.OnCodaStart(coda);
+            CurrentCoda.OnLaneHit += OnLaneHit;
+        }
+
+        protected override void OnCodaEnd(CodaSection coda)
+        {
+            base.OnCodaEnd(coda);
+            CurrentCoda.OnLaneHit -= OnLaneHit;
+        }
+
+
         private void OnPadHit(DrumsAction action, bool wasNoteHit, bool wasNoteHitCorrectly, DrumNoteType type, float velocity)
         {
+            var fret = GetFret(action);
+
+            // This is done here for drums rather than in-engine because engine doesn't know about pad ordering
+            if (Engine.IsCodaActive)
+            {
+                CurrentCoda.HitLane(GameManager.VisualTime, fret);
+            }
+
             // Update last hit times for fret flashing animation
             if (action is not DrumsAction.Kick)
             {
@@ -571,7 +603,6 @@ namespace YARG.Gameplay.Player
                 }
                 else
                 {
-                    int fret = GetFret(action);
                     _fretArray.PlayMissAnimation(fret);
                 }
             }
@@ -629,9 +660,10 @@ namespace YARG.Gameplay.Player
 
         private bool IsDrumFreestyle()
         {
-            return Engine.NoteIndex == 0 || // Can freestyle before first note is hit/missed
+            return Engine.NoteIndex == 0 ||        // Can freestyle before first note is hit/missed
                 Engine.NoteIndex >= Notes.Count || // Can freestyle after last note
-                Engine.IsWaitCountdownActive; // Can freestyle during WaitCountdown
+                Engine.IsWaitCountdownActive ||    // Can freestyle during WaitCountdown
+                Engine.IsCodaActive;               // Can freestyle during Coda
             // TODO: add drum fill / BRE conditions
         }
 
@@ -656,6 +688,21 @@ namespace YARG.Gameplay.Player
         protected override void UpdateVisuals(double visualTime)
         {
             base.UpdateVisuals(visualTime);
+
+            if (Engine.IsCodaActive)
+            {
+                var lanes = _fiveLaneMode ? 5 : 4;
+                // Set emission color of BRE lanes depending on time since last hit
+                for (int i = 0; i < lanes; i++)
+                {
+                    // var intensity = CurrentCoda.GetNormalizedTimeSinceLastHit(i, visualTime);
+                    // intensity = 1 - (float) Math.Clamp(Math.Cos(Math.PI * intensity), 0f, 1f);
+                    // intensity = 1 - (float) Math.Clamp((Math.Tan(intensity) * -1) + 1, 0f, 1f);
+                    // intensity = (float) Math.Clamp((Math.Atan(intensity * 2) * -1) + 1, 0f, 1f);
+                    BRELanes[i].SetEmissionColor(CurrentCoda.GetNormalizedTimeSinceLastHit(i, visualTime));
+                }
+            }
+
             UpdateHitTimes();
             UpdateAnimTimes();
             UpdateFretArray();

@@ -13,7 +13,7 @@ namespace YARG.Gameplay.Visuals
         private double _starpowerAmount;
         private bool _starpowerActive;
 
-        public void SetStarpower(double starpowerAmount, bool starpowerActive)
+        public void SetStarpower(double starpowerAmount, bool starpowerActive, bool codaStarted)
         {
             _starpowerAmount = starpowerAmount;
             _starpowerActive = starpowerActive;

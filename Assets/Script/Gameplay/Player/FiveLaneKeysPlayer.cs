@@ -4,6 +4,7 @@ using UnityEngine;
 using YARG.Core;
 using YARG.Core.Audio;
 using YARG.Core.Chart;
+using YARG.Core.Engine;
 using YARG.Core.Input;
 using YARG.Core.Logging;
 using YARG.Core.Replays;
@@ -79,6 +80,9 @@ namespace YARG.Assets.Script.Gameplay.Player
             {
                 _stem = SongStem.Rhythm;
             }
+
+            BRELanes = new LaneElement[5];
+
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
         }
 
@@ -125,6 +129,9 @@ namespace YARG.Assets.Script.Gameplay.Player
 
             engine.OnSoloStart += OnSoloStart;
             engine.OnSoloEnd += OnSoloEnd;
+
+            engine.OnCodaStart += OnCodaStart;
+            engine.OnCodaEnd += OnCodaEnd;
 
             engine.OnStarPowerPhraseHit += OnStarPowerPhraseHit;
             engine.OnStarPowerPhraseMissed += OnStarPowerPhraseMissed;
@@ -376,6 +383,24 @@ namespace YARG.Assets.Script.Gameplay.Player
         {
             LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 5, true);
         }
+
+        private void OnLaneHit(int fret)
+        {
+            _fretArray.PlayCodaHitAnimation(fret);
+        }
+
+        protected override void OnCodaStart(CodaSection coda)
+        {
+            base.OnCodaStart(coda);
+            CurrentCoda.OnLaneHit += OnLaneHit;
+        }
+
+        protected override void OnCodaEnd(CodaSection coda)
+        {
+            base.OnCodaEnd(coda);
+            CurrentCoda.OnLaneHit -= OnLaneHit;
+        }
+
 
         protected override void OnNoteHit(int index, GuitarNote note)
         {

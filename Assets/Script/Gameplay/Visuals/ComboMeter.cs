@@ -67,7 +67,7 @@ namespace YARG.Gameplay.Visuals
             _comboMesh.material.SetColor(_multiplierColorProperty, color);
         }
 
-        public void SetCombo(int multiplier, int displayMultiplier, int maxMultiplier, int combo)
+        public void SetCombo(int multiplier, int displayMultiplier, int maxMultiplier, int combo, bool codaStarted)
         {
             _multiplierText.enabled = false;
             if (displayMultiplier > 1)

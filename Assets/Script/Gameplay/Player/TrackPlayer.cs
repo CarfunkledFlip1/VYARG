@@ -179,7 +179,12 @@ namespace YARG.Gameplay.Player
         private List<TrackEffectElement> _currentEffects = new();
         protected List<TrackEffect> _trackEffects = new();
 
+        private List<Phrase> _brePhrases = new();
+        private int _breIndex = 0;
+
         protected SongChart Chart;
+
+        protected CodaSection CurrentCoda;
 
         public override void Initialize(int index, YargPlayer player, SongChart chart, TrackView trackView,
             StemMixer mixer, int? currentHighScore)
@@ -242,6 +247,7 @@ namespace YARG.Gameplay.Player
             GameManager.BeatEventHandler.Audio.Subscribe(MetronomeTock, BeatEventType.QuarterNote);
             GameManager.BeatEventHandler.Visual.Subscribe(SunburstEffects.PulseSunburst, BeatEventType.StrongBeat);
             InitializeTrackEffects();
+            InitializeCodaEvents();
 
             ResetNoteCounters();
 
@@ -257,6 +263,26 @@ namespace YARG.Gameplay.Player
             GameManager.BeatEventHandler.Visual.Unsubscribe(SunburstEffects.PulseSunburst);
 
             base.FinishDestruction();
+        }
+
+        private void InitializeCodaEvents()
+        {
+            double codaTime = double.MaxValue;
+
+            var codaEvent = Chart.GetCodaEvent();
+            if (codaEvent != null)
+            {
+                codaTime = codaEvent.Time;
+            }
+
+            // This could be done more efficiently by including this in InitializeTrackEffects, but I don't want to tangle things up like that
+            foreach (var phrase in NoteTrack.Phrases)
+            {
+                if (phrase.Type == PhraseType.BigRockEnding)
+                {
+                    _brePhrases.Add(phrase);
+                }
+            }
         }
 
         private void InitializeTrackEffects()
@@ -361,6 +387,7 @@ namespace YARG.Gameplay.Player
             UpdateNotes(visualTime);
             UpdateBeatlines(visualTime);
             UpdateTrackEffects(visualTime);
+            UpdateCodaEvents(visualTime);
 
             var stats = Engine.BaseStats;
 
@@ -386,8 +413,8 @@ namespace YARG.Gameplay.Player
                 ? stats.ScoreMultiplier / 2
                 : stats.ScoreMultiplier;
 
-            ComboMeter.SetCombo(stats.ScoreMultiplier, displayMultiplier, maxMultiplier, stats.Combo);
-            StarpowerBar.SetStarpower(currentStarPowerAmount, stats.IsStarPowerActive);
+            ComboMeter.SetCombo(stats.ScoreMultiplier, displayMultiplier, maxMultiplier, stats.Combo, Engine.CodaHasStarted);
+            StarpowerBar.SetStarpower(currentStarPowerAmount, stats.IsStarPowerActive, Engine.CodaHasStarted);
             StarpowerBar.UpdateFlash(GameManager.BeatEventHandler.Visual.StrongBeat.CurrentPercentage);
             SunburstEffects.SetSunburstEffects(groove, stats.IsStarPowerActive, _currentMultiplier);
 
@@ -509,6 +536,35 @@ namespace YARG.Gameplay.Player
             }
         }
 
+        private void UpdateCodaEvents(double time)
+        {
+            while (_breIndex < _brePhrases.Count && _brePhrases[_breIndex].Time <= time + SpawnTimeOffset)
+            {
+
+                var phrase = _brePhrases[_breIndex];
+                _breIndex++;
+
+                StartBRE(phrase.Time, phrase.TimeEnd);
+                //
+                // if (!LanePool.CanSpawnAmount(BRELanes.Length))
+                // {
+                //     return;
+                // }
+                //
+                // RescaleLanesForBRE();
+                //
+                // for (int i = 0; i < BRELanes.Length; i++)
+                // {
+                //     var newLane = (LaneElement) LanePool.TakeWithoutEnabling();
+                //     newLane.SetTimeRange(phrase.Time, phrase.TimeEnd);
+                //     InitializeSpawnedLane(newLane, i + 1);
+                //     newLane.EnableFromPool();
+                //
+                //     BRELanes[i] = newLane;
+                // }
+            }
+        }
+
         private void UpdateTrackEffects(double time)
         {
             if (_upcomingEffects.TryPeek(out var nextEffect) && nextEffect.Time <= time + SpawnTimeOffset)
@@ -582,14 +638,6 @@ namespace YARG.Gameplay.Player
 
         private void SpawnEffect(TrackEffect nextEffect, bool seeking)
         {
-            // TODO: Think of a better way to handle BREs that doesn't involve the track effect stuff
-            if (nextEffect.EffectType == TrackEffectType.BigRockEnding)
-            {
-                StartBRE(nextEffect.Time, nextEffect.TimeEnd);
-                _upcomingEffects.Dequeue();
-                return;
-            }
-
             var poolable = EffectPool.TakeWithoutEnabling();
             if (poolable == null)
             {
@@ -659,6 +707,7 @@ namespace YARG.Gameplay.Player
             poolable.EnableFromPool();
         }
 
+        // ReSharper disable once InconsistentNaming
         private void StartBRE(double timeStart, double timeEnd)
         {
             RescaleLanesForBRE();
@@ -675,6 +724,8 @@ namespace YARG.Gameplay.Player
                 newLane.SetTimeRange(timeStart, timeEnd);
                 InitializeSpawnedLane(newLane, i + 1);
                 newLane.EnableFromPool();
+
+                newLane.SetEmissionColor(0);
 
                 BRELanes[i] = newLane;
             }
@@ -999,6 +1050,17 @@ namespace YARG.Gameplay.Player
             {
                 haptic.SetSoloActive(false);
             }
+        }
+
+        protected virtual void OnCodaStart(CodaSection coda)
+        {
+            CurrentCoda = coda;
+            TrackView.StartCoda(coda);
+        }
+
+        protected virtual void OnCodaEnd(CodaSection coda)
+        {
+            TrackView.EndCoda(coda.TotalCodaBonus);
         }
 
         protected virtual void OnCountdownChange(double countdownLength, double endTime)

@@ -165,6 +165,8 @@ namespace YARG.Gameplay.Player
                 _rangeShiftIndex++;
             }
 
+            BRELanes = new LaneElement[5]; // 5 lanes for 5 groups of 5
+
             LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, WHITE_KEY_VISIBLE_COUNT);
         }
 
