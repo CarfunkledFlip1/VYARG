@@ -180,7 +180,7 @@ namespace YARG.Gameplay.Player
         protected List<TrackEffect> _trackEffects = new();
 
         private List<Phrase> _brePhrases = new();
-        private int _breIndex = 0;
+        private int _breIndex;
 
         protected SongChart Chart;
 
@@ -376,6 +376,9 @@ namespace YARG.Gameplay.Player
             BeatlineIndex = 0;
             ResetNoteCounters();
 
+            CurrentCoda = null;
+            _breIndex = 0;
+
             base.ResetPracticeSection();
         }
 
@@ -545,23 +548,6 @@ namespace YARG.Gameplay.Player
                 _breIndex++;
 
                 StartBRE(phrase.Time, phrase.TimeEnd);
-                //
-                // if (!LanePool.CanSpawnAmount(BRELanes.Length))
-                // {
-                //     return;
-                // }
-                //
-                // RescaleLanesForBRE();
-                //
-                // for (int i = 0; i < BRELanes.Length; i++)
-                // {
-                //     var newLane = (LaneElement) LanePool.TakeWithoutEnabling();
-                //     newLane.SetTimeRange(phrase.Time, phrase.TimeEnd);
-                //     InitializeSpawnedLane(newLane, i + 1);
-                //     newLane.EnableFromPool();
-                //
-                //     BRELanes[i] = newLane;
-                // }
             }
         }
 

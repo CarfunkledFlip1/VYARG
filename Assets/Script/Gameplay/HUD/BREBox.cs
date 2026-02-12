@@ -44,10 +44,15 @@ namespace YARG.Gameplay.HUD
 
         private Coroutine _currentCoroutine;
 
+        private Vector3 _originalPosition;
+        private Vector3 _originalScale;
+        private float   _originalAlpha;
+
         public void StartCoda(CodaSection coda)
         {
-            // Don't even bother if the solo has no points
-            // if (coda.NoteCount == 0) return;
+            _originalPosition = _breBoxCanvasGroup.transform.localPosition;
+            _originalScale = _breBoxCanvasGroup.transform.localScale;
+            _originalAlpha = _breBoxCanvasGroup.alpha;
 
             _coda = coda;
             _breEnded = false;
@@ -80,8 +85,6 @@ namespace YARG.Gameplay.HUD
             if (_breEnded || _showingForPreview) return;
 
             _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _coda.TotalCodaBonus);
-            // _breTopText.SetTextFormat("{0}", _coda.TotalCodaBonus);
-            // _breBottomText.SetTextFormat("{0}/{1}", _coda.NotesHit, _coda.NoteCount);
         }
 
         public void EndCoda(int breBonus, Action endCallback)
@@ -97,6 +100,15 @@ namespace YARG.Gameplay.HUD
             _breEnded = true;
 
             _breBox.gameObject.SetActive(false);
+
+            _breBoxCanvasGroup.transform.localPosition = _originalPosition;
+            _breBoxCanvasGroup.transform.localScale = Vector3.one;
+            _breBoxCanvasGroup.alpha = _originalAlpha;
+
+            _breFullText.text = string.Empty;
+            _breBox.sprite = _breSpriteNormal;
+            _breFullText.colorGradientPreset = _breGradientNormal;
+
             _currentCoroutine = null;
             _coda = null;
         }

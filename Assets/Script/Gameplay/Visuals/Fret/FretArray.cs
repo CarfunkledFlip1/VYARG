@@ -222,6 +222,7 @@ namespace YARG.Gameplay.Visuals
             foreach (var fret in _frets)
             {
                 fret.SetSustained(false);
+                fret.SetBreMode(false);
             }
         }
 
@@ -280,6 +281,14 @@ namespace YARG.Gameplay.Visuals
                 }
 
                 _activeFrets[i] = frets[i];
+            }
+        }
+
+        public void SetBreMode(bool breMode)
+        {
+            foreach (var fret in _frets)
+            {
+                fret.SetBreMode(breMode);
             }
         }
     }
