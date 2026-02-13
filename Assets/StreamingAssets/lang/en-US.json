@@ -206,7 +206,10 @@
             }
         },
         "Toast": {
+            "AutoCalibrationScore": "Score saving disabled: Automatic calibration active.",
+            "NoFailScore": "Score saving disabled: No fail toggle had to reset fail meter.",
             "ProfileCreated": "Profile created for new device: {0}\nTime to do some YARGin!",
+            "TooManyPauses": "Score saving disabled: Too many pauses.",
             "UnsupportedDevice": "Automatic profile creation is not supported for {0}!"
         },
         "Dialog": {
@@ -325,7 +328,7 @@
             "NoPlayersConnected": "No players connected! Go to the profiles menu to connect a player.",
             "Play": "Play Song",
             "Search": "Search",
-            "SkipSection": "<align=left><size=80%>Navigate<br>Sections</size></align>",
+            "SkipSection": "<align=left>Navigate Sections</align>",
             "MoveInPlaylist": "Move Song",
             "CurrentSetlist": "Current Setlist",
             "AddToSet": "Add To Setlist",
@@ -338,7 +341,7 @@
             "AddToShow": "Add To Show",
             "AddedToShow": "Added To Show",
             "StartShow": "Start The Show",
-            "MoreOptions": "More Options",
+            "MoreOptions": "<align=left><size=80%>More Options<br>(Hold) Navigate Sections</size></align>",
             "PlayAShow": {
                 "LongSong": "A Long Song",
                 "RandomSong": "A Random Song",
@@ -1128,6 +1131,10 @@
                 "PauseName": "Rhythm",
                 "Description": "Adjusts the song's rhythm guitar track volume. Only does something if the song is multi-track. In some song formats, this may also be the bass guitar."
             },
+            "SaveScoresWithBots": {
+                "Name": "Save Scores with Bots",
+                "Description": "Allows score saving when playing with bots. Only human scores are recorded. Bot scores are excluded."
+            },
             "SfxVolume": {
                 "Name": "SFX Volume",
                 "PauseName": "SFX",
@@ -1251,6 +1258,11 @@
                 "Name": "Video Calibration (ms)",
                 "PauseName": "Video Calibration (ms)",
                 "Description": "Video calibration in milliseconds. Use the calibrator to automatically calibrate. This accounts for delays between the game's processing and the actual frame being displayed."
+            },
+            "AutoCalibration": {
+                "Name": "Auto Calibration",
+                "PauseName": "Auto Calibration",
+                "Description": "Automatically adjusts calibration during gameplay based on your input timing."
             },
             "VocalMonitoring": {
                 "Name": "Vocal Monitoring Volume",

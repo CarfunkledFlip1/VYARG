@@ -90,6 +90,7 @@ namespace YARG.Settings
 
             public IntSetting AudioCalibration { get; } = new(0);
             public IntSetting VideoCalibration { get; } = new(0);
+            public ToggleSetting AutoCalibration { get; } = new(false);
 
             public ToggleSetting AccountForHardwareLatency { get; } = new(true);
 
@@ -535,6 +536,7 @@ namespace YARG.Settings
                 BandComboType.Lenient,
                 BandComboType.Strict
             };
+            public ToggleSetting SaveScoresWithBots { get; } = new(false);
 
             public OutputDeviceSetting OutputDevice { get; } = new("Default", OutputDeviceCallback);
             public OutputChannelDefaultSetting OutputChannelDefault { get; } = new(1, OutputChannelDefaultCallback);

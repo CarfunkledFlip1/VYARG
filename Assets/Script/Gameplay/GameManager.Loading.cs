@@ -246,6 +246,8 @@ namespace YARG.Gameplay
                 EngineManager.InitializeHappiness();
 
                 SettingsManager.Settings.NoFailMode.OnChange += OnNoFailModeChanged;
+                SettingsManager.Settings.AutoCalibration.Value = false;
+                SettingsManager.Settings.AutoCalibration.OnChange += OnAutoCalibrationChanged;
             }
 
             // Log constant values
@@ -378,6 +380,8 @@ namespace YARG.Gameplay
                 int vocalIndex = -1;
                 foreach (var player in YargPlayers)
                 {
+                    player.IsScoreValid = true;
+
                     if (!player.IsReplay)
                     {
                         // Reset microphone (resets channel buffers)
