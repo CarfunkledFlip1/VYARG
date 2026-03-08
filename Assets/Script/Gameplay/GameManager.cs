@@ -165,6 +165,7 @@ namespace YARG.Gameplay
         private int _originalSleepTimeout;
 
         private StemMixer _mixer;
+        private HashSet<SongStem> _mixerStems;
 
         private List<double> _frameTimes;
 
@@ -233,11 +234,8 @@ namespace YARG.Gameplay
             SettingsManager.Settings.NoFailMode.OnChange -= OnNoFailModeChanged;
             EngineManager.OnSongFailed -= OnSongFailed;
 
-            //Restore stem volumes to their original state
-            foreach (var (stem, state) in _stemStates)
-            {
-                GlobalAudioHandler.SetVolumeSetting(stem, state.Volume);
-            }
+            // Restore crowd audio before disposing
+            RestoreCrowdAudio();
 
             DisposeDebug();
             _pauseMenu.PopAllMenus();
