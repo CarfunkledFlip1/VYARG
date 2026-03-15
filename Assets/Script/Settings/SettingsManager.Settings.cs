@@ -12,15 +12,18 @@ using YARG.Integration;
 using YARG.Integration.RB3E;
 using YARG.Integration.Sacn;
 using YARG.Integration.StageKit;
+using YARG.Menu.Filters;
 using YARG.Menu.MusicLibrary;
 using YARG.Menu.Persistent;
 using YARG.Menu.Settings;
 using YARG.Playback;
 using YARG.Player;
 using YARG.Scores;
+using YARG.Settings.Metadata;
 using YARG.Settings.Types;
 using YARG.Song;
 using YARG.Venue;
+using YARG.Venue.Characters;
 
 namespace YARG.Settings
 {
@@ -90,7 +93,8 @@ namespace YARG.Settings
 
             public IntSetting AudioCalibration { get; } = new(0);
             public IntSetting VideoCalibration { get; } = new(0);
-            public ToggleSetting AutoCalibration { get; } = new(false);
+            public ToggleSetting AutoCalibrateAudio { get; } = new(false);
+            public ToggleSetting AutoCalibrateVideo { get; } = new(false);
 
             public ToggleSetting AccountForHardwareLatency { get; } = new(true);
 
@@ -150,8 +154,10 @@ namespace YARG.Settings
 
             public ToggleSetting AllowDuplicateSongs { get; } = new(true, _ => MusicLibraryMenu.SetReload(MusicLibraryReloadState.Partial));
             public ToggleSetting UseFullDirectoryForPlaylists { get; } = new(false);
+            public ToggleSetting StandardizeGenres { get; } = new(true);
 
             public ToggleSetting ShowFavoriteButton { get; } = new(true);
+            public ToggleSetting ShowRecommendedSongs { get; } = new(true, ShowRecommendedSongsCallback);
 
             public SliderSetting PlayAShowTimeout { get; } = new (10.0f, 1.0f, 30.0f);
             public ToggleSetting RequireAllDifficulties { get; } = new(true);
@@ -177,6 +183,8 @@ namespace YARG.Settings
                     HighScoreHistoryMode.HighestOverall,
                     HighScoreHistoryMode.HighestDifficulty,
                 };
+
+            public ToggleSetting ShowPercentDecimals { get; } = new(false);
 
             #endregion
 
@@ -505,6 +513,8 @@ namespace YARG.Settings
 
             public ToggleSetting ShowAdvancedMusicLibraryOptions { get; } = new(false);
 
+            public ToggleSetting ShowAdvancedSettings { get; } = new(false);
+
             public DropdownSetting<LogLevel> MinimumLogLevel { get; } = new(
 #if UNITY_EDITOR
                 LogLevel.Debug,
@@ -537,6 +547,7 @@ namespace YARG.Settings
                 BandComboType.Strict
             };
             public ToggleSetting SaveScoresWithBots { get; } = new(false);
+            public SliderSetting FontScaling { get; } = new(0f, 0f, 100f, FontScalingCallback);
 
             public OutputDeviceSetting OutputDevice { get; } = new("Default", OutputDeviceCallback);
             public OutputChannelDefaultSetting OutputChannelDefault { get; } = new(1, OutputChannelDefaultCallback);
@@ -546,6 +557,7 @@ namespace YARG.Settings
             public OutputChannelSetting OutputChannelMetronome { get; } = new(-1, OutputChannelMetronomeCallback);
 
             public ToggleSetting EnableNormalization { get; } = new(false);
+            public CustomCharacterSetting CustomVocalsCharacter { get; } = new(string.Empty, VenueCharacter.CharacterType.Vocals, CustomCharacterCallback);
             #endregion
 
             #region Helpers
@@ -623,6 +635,26 @@ namespace YARG.Settings
                 StatsManager.Instance.SetShowing(StatsManager.Stat.ActiveBots, value);
             }
 
+            private static void ShowRecommendedSongsCallback(bool value)
+            {
+                if (FiltersMenu.Instance != null && FiltersMenu.Instance.gameObject.activeInHierarchy)
+                {
+                    // Defer refresh until the filters menu closes to avoid switching navigation schemes.
+                    MusicLibraryMenu.SetReload(MusicLibraryReloadState.Partial);
+                    return;
+                }
+
+                var library = Object.FindFirstObjectByType<MusicLibraryMenu>();
+                if (library != null)
+                {
+                    library.RefreshAndReselect();
+                }
+                else
+                {
+                    MusicLibraryMenu.SetReload(MusicLibraryReloadState.Partial);
+                }
+            }
+
             private static void DataStreamEnableCallback(bool value)
             {
                 //To avoid being toggled on twice at start
@@ -632,6 +664,12 @@ namespace YARG.Settings
                 }
                 DataStreamController.Instance.HandleEnabledChanged(value);
             }
+
+            private static void FontScalingCallback(float value)
+            {
+                MenuFontScaler.Instance.SetFontScalePercent(value);
+            }
+
             private static void RB3EEnabledCallback(bool value)
             {
                 RB3EHardware.Instance.HandleEnabledChanged(value);
@@ -871,6 +909,12 @@ namespace YARG.Settings
                 GlobalAudioHandler.PlayMetronomeSoundEffect(sample, MetronomePitch.Lo);
                 await Task.Delay(200);
                 GlobalAudioHandler.PlayMetronomeSoundEffect(sample, MetronomePitch.Lo);
+            }
+
+            private static void CustomCharacterCallback(string file)
+            {
+                // CharacterPreviewBuilder.CharacterFile = file;
+                CharacterPreviewBuilder.ChangeCharacter(file);
             }
             #endregion
         }

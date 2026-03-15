@@ -14,17 +14,22 @@ namespace YARG.Menu.MusicLibrary
 
         public override bool UseWiderPrimaryText => true;
 
+        public override string StableId => _stableId;
+
         public readonly  string HeaderText;
         public readonly  string ShortcutName;
         public readonly  string SourceCountText;
         public readonly  string CharterCountText;
         public readonly  string GenreCountText;
+        public readonly  string SubgenreCountText;
         private readonly int    _songCount;
         public           int    TotalStarsCount { get; set; }
 
         private static readonly HashSet<string> SourceCounter  = new();
         private static readonly HashSet<string> CharterCounter = new();
         private static readonly HashSet<string> GenreCounter   = new();
+        private static readonly HashSet<string> SubgenreCounter = new();
+        private readonly string _stableId;
 
         public SortHeaderViewType(string headerText, int songCount, string shortcutName, SongEntry[] songsUnderCategory)
         {
@@ -32,20 +37,24 @@ namespace YARG.Menu.MusicLibrary
             _songCount = songCount;
 
             ShortcutName = shortcutName;
+            _stableId = $"SortHeader:{headerText}:{shortcutName}";
 
             foreach (var song in songsUnderCategory)
             {
                 SourceCounter.Add(song.Source);
                 CharterCounter.Add(song.Charter);
                 GenreCounter.Add(song.Genre);
+                SubgenreCounter.Add(song.Subgenre);
             }
 
-            SourceCountText = $"{SourceCounter.Count} sources";
-            CharterCountText = $"{CharterCounter.Count} charters";
-            GenreCountText = $"{GenreCounter.Count} genres";
+            SourceCountText = Pluralize("Source", SourceCounter.Count);
+            CharterCountText = Pluralize("Charter", CharterCounter.Count);
+            GenreCountText = Pluralize("Genre", GenreCounter.Count);
+            SubgenreCountText = Pluralize("Subgenre", SubgenreCounter.Count);
             SourceCounter.Clear();
             CharterCounter.Clear();
             GenreCounter.Clear();
+            SubgenreCounter.Clear();
         }
 
         public override string GetPrimaryText(bool selected)
@@ -78,6 +87,11 @@ namespace YARG.Menu.MusicLibrary
                 600);
 
             return ZString.Concat(obtainedStars, totalStars);
+        }
+
+        private static string Pluralize(string item, int count)
+        {
+            return $"{count} {item}{(count == 1 ? "" : "s")}";
         }
 
 

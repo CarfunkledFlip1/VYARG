@@ -20,6 +20,12 @@ namespace YARG.Gameplay.HUD
 
             _toggle.onValueChanged.AddListener(SetValue);
             _toggle.SetIsOnWithoutNotify(setting.Value);
+            Setting.OnChange += OnSettingChanged;
+        }
+
+        private void OnSettingChanged(bool value)
+        {
+            _toggle.SetIsOnWithoutNotify(value);
         }
 
         protected override NavigationScheme GetNavigationScheme()
@@ -49,12 +55,16 @@ namespace YARG.Gameplay.HUD
             _toggle.SetIsOnWithoutNotify(Setting.Value);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             if (_toggle != null)
             {
                 _toggle.onValueChanged.RemoveListener(SetValue);
             }
+
+            Setting.OnChange -= OnSettingChanged;
+
+            base.OnDestroy();
         }
     }
 }

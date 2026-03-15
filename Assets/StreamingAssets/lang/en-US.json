@@ -76,6 +76,7 @@
             "Playlist": "Playlist",
             "SongLength": "Duration",
             "Source": "Source",
+			"Subgenre": "Subgenre",
             "Stars": "Stars",
             "Unspecified": "None",
             "Year": "Year",
@@ -102,14 +103,20 @@
             "Vocals": "Vocals",
             "Harmony": "Harmony",
             "Band": "Band",
-            "Playcount": "Play Count"
+            "Playcount": "Play Count",
+            "Random": "Random"
         },
         "StarPowerActivationType" : {
             "Freestyle": "Freestyle",
             "RightmostLane": "Rightmost Lane",
             "RightmostNote": "Rightmost Note",
             "AllNotes": "All Notes"
-        }
+        },
+		"OpenLaneDisplayType" : {
+			"Never": "Never",
+			"Always": "Always",
+			"IfChartContainsOpens": "If chart contains open notes"
+		}
     },
     "Menu": {
         "Calibrator": {
@@ -123,6 +130,7 @@
             "Close": "Close",
             "Confirm": "Confirm",
             "Continue": "Continue",
+            "Toggle": "Toggle",
             "On": "On",
             "Off": "Off",
             "Start": "Start",
@@ -278,7 +286,7 @@
             "PlayWithReplay": "Play With Replay"
         },
         "Main": {
-            "MessageOfTheDay": "<align=center><size=32><b>Welcome to v0.14!</b></size></align>\n\nv0.14 is a major update that adds 5 Lane Keys, a new MIDI Drums profile type, easier instrument setup, support for 3D venue events, performance improvements when using multiple highways, many visual improvements, and more.\n\n<b>If you have any feedback or find any bugs, please let us know on Discord or GitHub.</b>\n\nHappy YARGin'!",
+            "MessageOfTheDay": "<align=center><size=32><b>Welcome to the v0.15 nightlies!</b></size></align>\n\nv0.15 now has support for tremolo/trill lanes, customizable track backgrounds (including transparency), custom vocal characters for venues, advanced player performance tracking, repositionable highways, adds new in game calibration tools, and more! Oh, and the new and improved music library is finally here, including advanced song filters so even the largest library can't keep you from finding what you're looking for! :D\n\n<b>If you have any feedback or find any bugs, please let us know on Discord or GitHub.</b>\n\nHappy YARGin'!",
             "Options": {
                 "Quickplay": "Quickplay",
                 "Practice": "Practice",
@@ -312,6 +320,7 @@
                 "Item": {
                     "RandomSong": "Random Song",
                     "BackToTop": "Back to Top",
+                    "ScanSongs": "Scan Songs",
                     "SortBy": "Sort By: {0}",
                     "GoToSection": "Go To Section...",
                     "AddToFavorites": "Add To Favorites",
@@ -327,6 +336,8 @@
             "Back": "BACK",
             "NoPlayersConnected": "No players connected! Go to the profiles menu to connect a player.",
             "Play": "Play Song",
+            "PlayHoldAddToSet": "<align=left>Play Song<br><size=67%>(Hold) Add To Setlist</size></align>",
+            "AddHoldStartSet": "<align=left>Add to Setlist<br><size=67%>(Hold) Start The Set</size></align>",
             "Search": "Search",
             "SkipSection": "<align=left>Navigate Sections</align>",
             "MoveInPlaylist": "Move Song",
@@ -336,6 +347,7 @@
             "PlaylistAddedToSet": "Added {0:N0} Songs From Playlist To Setlist",
             "StartSet": "Start The Set",
             "PlayShow": "Play A Show",
+            "Filters": "Filters",
             "NoSongsInPlaylist": "No Songs In Playlist",
             "CannotAddToSelf": "No, I will not create an ouroboros for you. Nice try, Jaden.",
             "AddToShow": "Add To Show",
@@ -356,7 +368,82 @@
                 "StartsWithLetter": "A Song Starting With The Letter \"{0}\"",
                 "StartsWithNumber": "A Song Starting With A Number",
                 "StartsWithOther": "A Song Starting With Something Non-Alphanumeric"
-            }
+            },
+			"Genre": {
+				"Alternative": "Alternative",
+				"AmbientDrone": "Ambient/Drone",
+				"Ballad": "Ballad",
+				"Blues": "Blues",
+				"ChildrensMusic": "Children's Music",
+				"Chiptune": "Chiptune",
+				"ClassicRock": "Classic Rock",
+				"Classical": "Classical",
+				"Country": "Country",
+				"Dance": "Dance",
+				"DeathBlackMetal": "Death/Black Metal",
+				"Disco": "Disco",
+				"Djent": "Djent",
+				"DnbBreakbeatJungle": "DnB/Breakbeat/Jungle",
+				"DoomMetal": "Doom Metal",
+				"Dubstep": "Dubstep",
+				"Electronic": "Electronic",
+				"ElectronicRock": "Electronic Rock",
+				"Emo": "Emo",
+				"Folk": "Folk",
+				"Fusion": "Fusion",
+				"Glam": "Glam",
+				"Glitch": "Glitch",
+				"Grindcore": "Grindcore",
+				"GrooveMetal": "Groove Metal",
+				"Grunge": "Grunge",
+				"HardcoreEDM": "Hardcore EDM",
+				"HardRock": "Hard Rock",
+				"HeavyMetal": "Heavy Metal",
+				"HipHopRap": "Hip-Hop/Rap",
+				"Holiday": "Holiday",
+				"House": "House",
+				"IDM": "IDM",
+				"IndieRock": "Indie Rock",
+				"Industrial": "Industrial",
+				"Inspirational": "Inspirational",
+				"JPop": "J-Pop",
+				"JRock": "J-Rock",
+				"Jazz": "Jazz",
+				"KPop": "K-Pop",
+				"Latin": "Latin",
+				"Mashup": "Mashup",
+				"MathRock": "Math Rock",
+				"MelodicPowerMetal": "Melodic/Power Metal",
+				"Metalcore": "Metalcore",
+				"Noise": "Noise",
+				"NewWave": "New Wave",
+				"Novelty": "Novelty",
+				"NuMetal": "Nu-Metal",
+				"Orchestral": "Orchestral",
+				"Pop": "Pop",
+				"PopPunk": "Pop-Punk",
+				"PopRock": "Pop-Rock",
+				"PostHardcore": "Post-Hardcore",
+				"Progressive": "Progressive",
+				"Psychedelic": "Psychedelic",
+				"Punk": "Punk",
+				"RnbSoulFunk": "R&B/Soul/Funk",
+				"Reggae": "Reggae",
+				"Rock": "Rock",
+				"RockAndRoll": "Rock & Roll",
+				"Ska": "Ska",
+				"Soundtrack": "Soundtrack",
+				"SouthernRock": "Southern Rock",
+				"SurfRock": "Surf Rock",
+				"SynthpopElectropop": "Synthpop/Electropop",
+				"Techno": "Techno",
+				"ThrashSpeedMetal": "Thrash/Speed Metal",
+				"Trance": "Trance",
+				"Trap": "Trap",
+				"World": "World",
+				"Other": "Other",
+				"UnknownGenre": "Unknown Genre"
+			}
         },
         "ProfileInfo": {
             "Name": "Edit Profile",
@@ -378,9 +465,13 @@
         "ScoreScreen" : {
             "BandScoreNotSaved" : "(Score not saved)",
             "RestartSong" : "Restart Song",
+            "ShowAdvanced": "Show Advanced",
+            "HideAdvanced": "Hide Advanced",
             "EndSetlistEarly" : "End Setlist"
         },
         "Settings": {
+            "ShowAdvanced": "Show Advanced",
+            "HideAdvanced": "Hide Advanced",
             "NoFolder": "<i>No Folder</i>",
             "SearchHeader": {
                 "AllCategories": "All Categories",
@@ -389,6 +480,49 @@
             "SongCount": "{0:N0} <alpha=#60>Songs",
             "ScanNeeded": "<alpha=#60>Scan Needed",
             "DMXInfo": "DMX cue change and post-processing channel values:\n\n<b>Cue Change:</b>\n\n0 - No cue\n10 - Menu\n20 - Score\n30 - Intro\n40 - Verse\n50 - Chorus\n60 - Cool (loop)\n70 - Warm (loop)\n80 - Cool (manual)\n90 - Warm (manual)\n100 - Dischord\n110 - Stomp\n120 - Default\n130 - Harmony\n140 - Frenzy\n150 - Silhouettes\n160 - Silhouettes Spotlight\n170 - Searchlights\n180 - Sweep\n190 - Blackout (fast)\n200 - Blackout (slow)\n210 - Blackout (spotlight)\n220 - Flare (slow)\n230 - Flare (fast)\n240 - Big Rock Ending\n\nFor Strobe and Fog status listen to their respective channels.\n\n<b>Post-Processing:</b>\n\n0 - Default\r\n\nBasic effects\r\n4 - Bloom\n14 - Bright\n24 - Contrast\n34 - Mirror\n44 - PhotoNegative\n54 - Posterize\n\n\rColor filters/effects\r\n64 - Black And White\n74 - Sepia Tone\n84 - Silver Tone\n94 - Choppy Black And White\n104 - Photo Negative Red And Black\n114 - Polarized Black And White\n124 - Polarized Red And Blue\n134 - Desaturated Red\n144 - Desaturated Blue\n154 - Contrast Red\n164 - Contrast Green\n174 - Contrast Blue\n\r\nGrainy\r\n184 - Grainy Film\n194 - Grainy Chromatic Abberation\n\nScanlines\r\n204 - Scanlines\n214 - Scanlines Black And White\n224 - Scanlines Blue\n234 - Scanlines Security\n\r\nTrails\r\n244 - Trails\n252 - Trails Long\n253 - Trails Desaturated\n254 - Trails Flickery\n255 - Trails Spacey\n\nSee YARG docs for more information: https://docs.yarg.in/en/DMX"
+        },
+        "Filters": {
+            "OptionsHeader": "Options",
+            "FiltersHeader": "Filters",
+            "SortedBy": "Sorted By",
+            "ShowRecommendations": "Show Recommendations",
+            "ResetAllFilters": "(Hold) Reset All Filters",
+            "SelectAll": "Select All",
+            "DeselectAll": "Deselect All",
+            "None": "None",
+            "Selected": "{0} Selected",
+            "All": "All",
+            "SongCount": "{0} SONGS",
+            "Genres": "Genres",
+			"Subgenres": "Subgenres",
+            "Decades": "Decades",
+            "VocalParts": {
+                "Name": "Number of Vocal Parts",
+                "Solo": "Solo",
+                "Duet": "2-Part Harmony",
+                "Trio": "3-Part Harmony"
+            },
+            "Sources": "Song Sources",
+            "Charters": "Charters",
+            "Difficulties": {
+                "Name": "Difficulties",
+                "WarmUp": "Warm Up",
+                "Apprentice": "Apprentice",
+                "Solid": "Solid",
+                "Moderate": "Moderate",
+                "Challenging": "Challenging",
+                "Nightmare": "Nightmare",
+                "Impossible": "Impossible",
+                "Unknown": "Unknown",
+                "NoPart": "No Part"
+            },
+            "Length": {
+                "Name": "Song Lengths",
+                "Short": "Short (Under 3 Min)",
+                "Medium": "Medium (3-5 Min)",
+                "Long": "Long (5-7 Min)",
+                "Epic": "Epic (Over 7 Min)"
+            }
         }
     },
     "Gameplay": {
@@ -764,7 +898,8 @@
             "Experimental": "Experimental",
             "HUD": "HUD",
             "Gameplay": "Gameplay",
-            "OutputConfiguration": "Output Configuration"
+            "OutputConfiguration": "Output Configuration",
+            "Accessibility": "Accessibility"
         },
         "Button": {
             "CopyCurrentSongJsonFilePath": "Copy Current Song Json File Path",
@@ -931,6 +1066,10 @@
                 "Name": "Show FPS Counter",
                 "Description": "Shows the framerate counter on the Status Bar."
             },
+            "FontScaling": {
+                "Name": "Font Scaling",
+                "Description": "Scales the minimum font size to be more visible"
+            },
             "FullscreenMode": {
                 "Name": "Fullscreen Mode",
                 "Description": "Changes the fullscreen mode.",
@@ -958,6 +1097,10 @@
                     "Score": "Score",
                     "Stars": "Stars"
                 }
+            },
+            "ShowPercentDecimals": {
+                "Name": "Show Percent Decimals",
+                "Description": "Shows one decimal place for accuracy percentages in the Music Library and Score Screen."
             },
             "HighScoreHistory": {
                 "Name": "High Score History",
@@ -1177,6 +1320,10 @@
                 "Name": "Enable Stage Kit",
                 "Description": "Enables sending Stage Kit lighting data to all connected devices capable of reading it."
             },
+			"StandardizeGenres": {
+				"Name": "Standardize Genre Metadata",
+				"Description": "Categorizes genre metadata into a standard set of genres, using data from the Genrelizer GitHub repository. <color=white>Rescan required if changed!</color>"
+			},
             "StarPowerHighwayFx": {
                 "Name": "Star Power Highway FX Mode",
                 "Description": "Disables visual elements on the highway which appear when Star Power is active.",
@@ -1259,10 +1406,15 @@
                 "PauseName": "Video Calibration (ms)",
                 "Description": "Video calibration in milliseconds. Use the calibrator to automatically calibrate. This accounts for delays between the game's processing and the actual frame being displayed."
             },
-            "AutoCalibration": {
-                "Name": "Auto Calibration",
-                "PauseName": "Auto Calibration",
+            "AutoCalibrateAudio": {
+                "Name": "Auto Calibrate Audio",
+                "PauseName": "Auto Calibrate Audio",
                 "Description": "Automatically adjusts calibration during gameplay based on your input timing."
+            },
+            "AutoCalibrateVideo": {
+                "Name": "Auto Calibrate Video",
+                "PauseName": "Auto Calibrate Video",
+                "Description": "Placeholder setting. Currently has no effect."
             },
             "VocalMonitoring": {
                 "Name": "Vocal Monitoring Volume",
@@ -1442,6 +1594,10 @@
             "EnableNormalization": {
                 "Name": "Normalize Audio",
                 "Description": "If enabled, normalizes audio so that all songs are approximately the same volume.  Increases memory and performance requirements."
+            },
+            "CustomVocalsCharacter": {
+                "Name": "Custom Vocals Character",
+                "Description": "Select a custom vocals character to use in venues that support characters."
             }
         },
         "PresetType": {
