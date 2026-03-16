@@ -274,20 +274,9 @@ namespace YARG.Gameplay.Player
 
         private void InitializeCodaEvents()
         {
-            double codaTime = double.MaxValue;
-
-            var codaEvent = Chart.GetCodaEvent();
-            if (codaEvent != null)
-            {
-                codaTime = codaEvent.Time;
-            }
-
-            // This could be done more efficiently by including this in InitializeTrackEffects, but I don't want to tangle things up like that
             foreach (var phrase in NoteTrack.Phrases)
             {
-                // TODO: Second half of this is because chart parsing apparently isn't switching BRE/fill notes to BRE after codaTime
-                //  we should fix that once the visual stuff is worked out
-                if ((phrase.Type == PhraseType.BigRockEnding) || (phrase.Type == PhraseType.DrumFill && phrase.Time >= codaTime))
+                if (phrase.Type == PhraseType.BigRockEnding)
                 {
                     _brePhrases.Add(phrase);
                 }
