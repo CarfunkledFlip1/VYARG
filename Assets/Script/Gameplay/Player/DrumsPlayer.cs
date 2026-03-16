@@ -9,6 +9,7 @@ using YARG.Core.Engine;
 using YARG.Core.Engine.Drums;
 using YARG.Core.Engine.Drums.Engines;
 using YARG.Core.Input;
+using YARG.Core.Logging;
 using YARG.Core.Replays;
 using YARG.Gameplay.HUD;
 using YARG.Gameplay.Visuals;
@@ -357,6 +358,41 @@ namespace YARG.Gameplay.Player
 
         }
 
+        protected override void InitializeSpawnedLane(LaneElement lane, int laneIndex)
+        {
+            // TODO: Need to set the color here without the benefit of knowing the note..somehow
+            int highwayIndex = -1;
+            HighwayOrderingInfo highwayOrderingInfo = default;
+            foreach ((int index, var info) in _highwayOrdering)
+            {
+                if (laneIndex == Mathf.RoundToInt(info.Position))
+                {
+                    highwayIndex = index;
+                    highwayOrderingInfo = info;
+                    break;
+                }
+            }
+
+            if (highwayIndex == -1)
+            {
+                YargLogger.LogError("Unable to find highway index for lane index " + laneIndex + " in drums player.");
+                return;
+            }
+
+            var laneColor = (_fiveLaneMode ?
+                    Player.ColorProfile.FiveLaneDrums.GetNoteColor(highwayOrderingInfo.ColorIndex) :
+                    Player.ColorProfile.FourLaneDrums.GetNoteColor(highwayOrderingInfo.ColorIndex)
+                ).ToUnityColor();
+
+            lane.SetAppearance(
+                Player.Profile.CurrentInstrument,
+                highwayIndex,
+                highwayOrderingInfo.Position,
+                LaneCount,
+                laneColor
+                );
+        }
+
         protected override void ModifyLaneFromNote(LaneElement lane, DrumNote note)
         {
             if (note.Pad == 0)
@@ -514,7 +550,6 @@ namespace YARG.Gameplay.Player
                 }
                 else
                 {
-                    int fret = DrumsActionToHighwayIndex(action);
                     _fretArray.PlayMissAnimation(fret);
                 }
             }

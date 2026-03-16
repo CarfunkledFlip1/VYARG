@@ -206,7 +206,7 @@ namespace YARG.Gameplay.Player
 
             IndicatorStripes.Initialize(Player.EnginePreset.FiveFretGuitar);
 
-            
+
             _fretArray.Initialize(
                 _lanePositions,
                 LANE_COUNT,
@@ -421,6 +421,18 @@ namespace YARG.Gameplay.Player
                 LANE_COUNT,
                 Player.ColorProfile.FiveFretGuitar.GetNoteColor(note.Fret).ToUnityColor()
             );
+        }
+
+        protected override void InitializeSpawnedLane(LaneElement lane, int laneIndex)
+        {
+            // TODO: Determine if we need the following to handle lefty flip
+            // var index = Player.Profile.LeftyFlip ? (LANE_COUNT + 1) - laneIndex : laneIndex;
+            lane.SetAppearance(
+                Player.Profile.CurrentInstrument,
+                laneIndex,
+                laneIndex,
+                LANE_COUNT,
+                Player.ColorProfile.FiveFretGuitar.GetNoteColor(laneIndex).ToUnityColor());
         }
 
         protected override void ModifyLaneFromNote(LaneElement lane, GuitarNote note)

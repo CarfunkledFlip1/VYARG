@@ -474,6 +474,18 @@ namespace YARG.Gameplay.Player
             lane.OffsetXPosition(_currentOffset);
         }
 
+        // TODO: This isn't actually what we need to deal with BRE lanes for PK
+        protected override void InitializeSpawnedLane(LaneElement lane, int index)
+        {
+            int noteIndex = index % 12;
+            int octaveIndex = index / 12;
+
+            int group = octaveIndex * 2 + (ProKeysUtilities.IsLowerHalfKey(noteIndex) ? 0 : 1);
+
+            lane.SetAppearance(Player.Profile.CurrentInstrument, index, _keysArray.GetKeyX(index), Player.ColorProfile.ProKeys.GetOverlayColor(group).ToUnityColor());
+            lane.OffsetXPosition(_currentOffset);
+        }
+
         protected override void ModifyLaneFromNote(LaneElement lane, ProKeysNote note)
         {
             if (note.IsTrill && note.NextNote != null)

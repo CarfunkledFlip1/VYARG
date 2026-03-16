@@ -285,7 +285,9 @@ namespace YARG.Gameplay.Player
             // This could be done more efficiently by including this in InitializeTrackEffects, but I don't want to tangle things up like that
             foreach (var phrase in NoteTrack.Phrases)
             {
-                if (phrase.Type == PhraseType.BigRockEnding)
+                // TODO: Second half of this is because chart parsing apparently isn't switching BRE/fill notes to BRE after codaTime
+                //  we should fix that once the visual stuff is worked out
+                if ((phrase.Type == PhraseType.BigRockEnding) || (phrase.Type == PhraseType.DrumFill && phrase.Time >= codaTime))
                 {
                     _brePhrases.Add(phrase);
                 }
@@ -725,7 +727,7 @@ namespace YARG.Gameplay.Player
                 var newLane = (LaneElement) LanePool.TakeWithoutEnabling();
 
                 newLane.SetTimeRange(timeStart, timeEnd);
-                InitializeSpawnedLane(newLane, i + 1);
+                InitializeSpawnedLane(newLane, i);
                 newLane.EnableFromPool();
 
                 newLane.SetEmissionColor(0);
@@ -950,6 +952,7 @@ namespace YARG.Gameplay.Player
 
         protected abstract void InitializeSpawnedNote(IPoolable poolable, TNote note);
         protected abstract void InitializeSpawnedLane(LaneElement lane, TNote note);
+        protected abstract void InitializeSpawnedLane(LaneElement lane, int laneIndex);
         protected virtual void ModifyLaneFromNote(LaneElement lane, TNote note) {}
 
         protected abstract void RescaleLanesForBRE();

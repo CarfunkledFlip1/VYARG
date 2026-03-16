@@ -412,6 +412,15 @@ public override bool ShouldUpdateInputsOnResume => true;
             );
         }
 
+        protected override void InitializeSpawnedLane(LaneElement lane, int laneIndex)
+        {
+            lane.SetAppearance(Player.Profile.CurrentInstrument,
+                laneIndex,
+                GetLanePositionOrCentered(laneIndex),
+                LaneCount,
+                Player.ColorProfile.FiveFretGuitar.GetNoteColor(laneIndex).ToUnityColor());
+        }
+
         protected override void ModifyLaneFromNote(LaneElement lane, GuitarNote note)
         {
             if (note.Fret == (int) FiveFretGuitarFret.Open && !UsingOpenLane)

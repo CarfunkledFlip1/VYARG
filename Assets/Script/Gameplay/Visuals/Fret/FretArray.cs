@@ -271,7 +271,7 @@ namespace YARG.Gameplay.Visuals
 
         public void SetBreMode(bool breMode)
         {
-            foreach (var fret in _frets)
+            foreach (var (_, fret) in _frets)
             {
                 fret.SetBreMode(breMode);
             }
