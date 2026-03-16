@@ -432,7 +432,7 @@ namespace YARG.Gameplay.Player
                 laneIndex,
                 laneIndex,
                 LANE_COUNT,
-                Player.ColorProfile.FiveFretGuitar.GetNoteColor(laneIndex).ToUnityColor());
+                Player.ColorProfile.FiveFretGuitar.GetNoteColor(laneIndex + 1).ToUnityColor());
         }
 
         protected override void ModifyLaneFromNote(LaneElement lane, GuitarNote note)
@@ -454,7 +454,7 @@ namespace YARG.Gameplay.Player
 
         private void OnLaneHit(int fret)
         {
-            _fretArray.PlayCodaHitAnimation(fret);
+            _fretArray.PlayCodaHitAnimation(fret + 1);
         }
 
         protected override void OnCodaStart(CodaSection coda)
