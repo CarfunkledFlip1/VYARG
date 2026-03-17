@@ -702,7 +702,7 @@ namespace YARG.Gameplay.Player
         }
 
         // ReSharper disable once InconsistentNaming
-        private void StartBRE(double timeStart, double timeEnd)
+        protected virtual void StartBRE(double timeStart, double timeEnd)
         {
             RescaleLanesForBRE();
 
