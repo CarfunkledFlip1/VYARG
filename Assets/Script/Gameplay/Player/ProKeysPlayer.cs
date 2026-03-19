@@ -556,10 +556,46 @@ namespace YARG.Gameplay.Player
             _keysArray.PlayHitAnimation(key);
         }
 
+        private Dictionary<int,int> GetLaneIndexes()
+        {
+            var laneIndexes = new Dictionary<int, int>();
+
+            var colorIndex = 1;
+            var laneIndex = 0;
+            var topKey = ColorStartKeys[colorIndex] - 1;
+            var totalLanes = _breLaneParameters.Count;
+            for (int i = 0; i < TOTAL_KEY_COUNT; i++)
+            {
+                // Distribute out of range keys between the visible lanes
+                if (i < _currentIndex || i > _breLaneParameters[^1].LeftKey + _breLaneParameters[^1].Width)
+                {
+                    laneIndexes[i] = i % totalLanes;
+                    continue;
+                }
+
+                // Increment indexes when we cross a color boundary
+                if (i == ColorStartKeys[colorIndex])
+                {
+                    colorIndex++;
+                    laneIndex++;
+                    topKey = ColorStartKeys[colorIndex] - 1;
+                }
+
+                // Assign in range keys to their corresponding lane
+                if (i <= topKey)
+                {
+                    laneIndexes[i] = laneIndex;
+                }
+            }
+
+            return laneIndexes;
+        }
+
         protected override void OnCodaStart(CodaSection coda)
         {
             base.OnCodaStart(coda);
             CurrentCoda.OnLaneHit += OnLaneHit;
+            CurrentCoda.SetLaneIndexes(GetLaneIndexes());
             // _keysArray.SetBreMode(true);
         }
 
@@ -733,6 +769,7 @@ namespace YARG.Gameplay.Player
 
         private struct LaneParameters
         {
+            public int   LeftKey;
             public int   CenterKey;
             public int   Width;
             public float OffsetX;
@@ -811,6 +848,7 @@ namespace YARG.Gameplay.Player
 
                         lanes.Add(new LaneParameters
                         {
+                            LeftKey = leftmost,
                             CenterKey = centerKey,
                             Width = width,
                             OffsetX = 0
@@ -848,7 +886,7 @@ namespace YARG.Gameplay.Player
                     width++;
                 }
 
-                lanes.Add(new LaneParameters {CenterKey = centerKey, Width = width, OffsetX = offsetX});
+                lanes.Add(new LaneParameters {LeftKey = leftmost, CenterKey = centerKey, Width = width, OffsetX = offsetX});
             }
 
             return lanes;
