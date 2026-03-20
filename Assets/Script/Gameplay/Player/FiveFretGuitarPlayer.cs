@@ -135,7 +135,8 @@ namespace YARG.Gameplay.Player
                 _stem = SongStem.Rhythm;
             }
 
-            BRELanes = new LaneElement[5];
+            BRELanes = new LaneElement[LANE_COUNT];
+            LaneCount = LANE_COUNT;
 
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
         }

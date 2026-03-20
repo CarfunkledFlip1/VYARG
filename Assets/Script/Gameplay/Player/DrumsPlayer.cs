@@ -28,10 +28,6 @@ namespace YARG.Gameplay.Player
         // Key is a FourLaneDrumPad or FiveLaneDrumPad
         private Dictionary<int, HighwayOrderingInfo> _highwayOrdering;
 
-        // Number of distinct frets in the fret array.
-        // Derivable, but predetermined by MakeHighwayOrdering() for performance reasons
-        public int LaneCount { get; private set; }
-
         private int DrumsActionToHighwayIndex(DrumsAction action)
         {
             if (_fiveLaneMode)
@@ -125,8 +121,6 @@ namespace YARG.Gameplay.Player
         {
             // Before we do anything, see if we're in five lane mode or not
             _fiveLaneMode = player.Profile.CurrentInstrument == Instrument.FiveLaneDrums;
-            // TODO: Fix this for split mode
-            BRELanes = new LaneElement[_fiveLaneMode ? 5 : 4];
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
         }
 
@@ -230,6 +224,8 @@ namespace YARG.Gameplay.Player
 
             // Initialize animation types
             InitializeAnimTypes();
+
+            BRELanes = new LaneElement[LaneCount];
 
             base.FinishInitialization();
             LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, _fiveLaneMode ? 5 : 4);
@@ -476,6 +472,7 @@ namespace YARG.Gameplay.Player
 
         private void OnLaneHit(int fret)
         {
+            fret = DrumsActionToHighwayIndex((DrumsAction) fret);
             _fretArray.PlayCodaHitAnimation(fret);
         }
 
@@ -501,7 +498,7 @@ namespace YARG.Gameplay.Player
             // This is done here for drums rather than in-engine because engine doesn't know about pad ordering
             if (Engine.IsCodaActive)
             {
-                CurrentCoda.HitLane(GameManager.VisualTime, fret);
+                CurrentCoda.HitLane(GameManager.VisualTime, (int) action);
             }
 
             // Update last hit times for fret flashing animation

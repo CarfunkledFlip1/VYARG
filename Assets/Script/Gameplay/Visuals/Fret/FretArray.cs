@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using YARG.Core;
@@ -156,6 +157,7 @@ namespace YARG.Gameplay.Visuals
 
         public void PlayCodaHitAnimation(int index)
         {
+            // index = Mathf.Clamp(index, _frets.Keys.Min(), _frets.Keys.Max());
             _frets[index].PlayHitAnimation();
             _frets[index].PlayHitParticles();
         }

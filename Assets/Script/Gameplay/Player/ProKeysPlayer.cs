@@ -556,7 +556,7 @@ namespace YARG.Gameplay.Player
             _keysArray.PlayHitAnimation(key);
         }
 
-        private Dictionary<int,int> GetLaneIndexes()
+        protected override Dictionary<int,int> GetLaneIndexes()
         {
             var laneIndexes = new Dictionary<int, int>();
 
@@ -786,8 +786,6 @@ namespace YARG.Gameplay.Player
 
             return _currentIndex + 1;
         }
-
-        private int GetLaneCount(int index) => index < 9 ? 3 : 4;
 
         private List<LaneParameters> GetLaneParameters()
         {

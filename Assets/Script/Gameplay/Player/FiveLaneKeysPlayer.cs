@@ -8,6 +8,7 @@ using YARG.Core.Chart;
 using YARG.Core.Engine.Keys;
 using YARG.Core.Engine.Keys.Engines;
 using YARG.Core.Engine;
+using YARG.Core.Extensions;
 using YARG.Core.Input;
 using YARG.Core.Logging;
 using YARG.Core.Replays;
@@ -44,10 +45,9 @@ namespace YARG.Assets.Script.Gameplay.Player
             return (LaneCount - 1) / 2;
         }
 
-        public int LaneCount { get; private set; }
         public bool UsingOpenLane { get; private set; }
 
-        private FiveFretGuitarFret GetFretIndex(FiveLaneKeysAction action)
+        private static FiveFretGuitarFret GetFretIndex(FiveLaneKeysAction action)
         {
             return action switch
             {
@@ -127,9 +127,6 @@ public override bool ShouldUpdateInputsOnResume => true;
             {
                 _stem = SongStem.Rhythm;
             }
-
-            // TODO: This needs to take open being a separate lane into account
-            BRELanes = new LaneElement[LaneCount];
 
             base.Initialize(index, player, chart, trackView, mixer, currentHighScore);
         }
@@ -216,7 +213,9 @@ public override bool ShouldUpdateInputsOnResume => true;
                 InitializeRangeShift();
             }
 
-            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, 4);
+            BRELanes = new LaneElement[LaneCount];
+
+            LaneElement.DefineLaneScale(Player.Profile.CurrentInstrument, LaneCount);
 
             GameManager.BeatEventHandler.Visual.Subscribe(_fretArray.PulseFretColors, BeatEventType.StrongBeat);
         }
@@ -440,7 +439,14 @@ public override bool ShouldUpdateInputsOnResume => true;
 
         private void OnLaneHit(int fret)
         {
-            _fretArray.PlayCodaHitAnimation(fret);
+            // TODO: Remove dirty hack to deal with open lane
+            if (fret == 5)
+            {
+                fret++;
+            }
+
+            var index = GetFretIndex((FiveLaneKeysAction)fret).Convert();
+            _fretArray.PlayCodaHitAnimation(index);
         }
 
         protected override void OnCodaStart(CodaSection coda)
@@ -788,6 +794,19 @@ public override bool ShouldUpdateInputsOnResume => true;
                 default:
                     throw new ArgumentOutOfRangeException("Unrecognized OpenLaneDisplayType");
             }
+        }
+
+        protected override Dictionary<int, int> GetLaneIndexes()
+        {
+            return new Dictionary<int, int>
+            {
+                { (int) FiveLaneKeysAction.GreenKey, 0 },
+                { (int) FiveLaneKeysAction.RedKey, 1 },
+                { (int) FiveLaneKeysAction.YellowKey, 2 },
+                { (int) FiveLaneKeysAction.BlueKey, 3 },
+                { (int) FiveLaneKeysAction.OrangeKey, 4 },
+                { (int) FiveLaneKeysAction.OpenNote, 5 }
+            };
         }
     }
 }
