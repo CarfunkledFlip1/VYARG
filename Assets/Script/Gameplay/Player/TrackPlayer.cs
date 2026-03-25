@@ -141,6 +141,7 @@ namespace YARG.Gameplay.Player
 
             ComboMeter.SetFullCombo(IsFc);
             TrackView.ForceReset();
+            GameManager.ResetCoda();
 
             NotePool.ReturnAllObjects();
             LanePool.ReturnAllObjects();
@@ -1051,12 +1052,12 @@ namespace YARG.Gameplay.Player
         {
             CurrentCoda = coda;
             CurrentCoda.SetLaneIndexes(GetLaneIndexes());
-            TrackView.StartCoda(coda);
+            GameManager.StartCoda(coda);
         }
 
         protected virtual void OnCodaEnd(CodaSection coda)
         {
-            TrackView.EndCoda(coda.TotalCodaBonus);
+            GameManager.EndCoda(coda);
         }
 
         protected virtual void OnCountdownChange(double countdownLength, double endTime)

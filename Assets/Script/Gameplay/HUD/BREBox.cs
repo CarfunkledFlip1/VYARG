@@ -48,8 +48,16 @@ namespace YARG.Gameplay.HUD
         private Vector3 _originalScale;
         private float   _originalAlpha;
 
+        private bool _isInCoda;
+
         public void StartCoda(CodaSection coda)
         {
+            if (_isInCoda)
+            {
+                return;
+            }
+
+            _isInCoda = true;
             _originalPosition = _breBoxCanvasGroup.transform.localPosition;
             _originalScale = _breBoxCanvasGroup.transform.localScale;
             _originalAlpha = _breBoxCanvasGroup.alpha;
@@ -89,6 +97,12 @@ namespace YARG.Gameplay.HUD
 
         public void EndCoda(int breBonus, Action endCallback)
         {
+            if (!_isInCoda)
+            {
+                return;
+            }
+
+            _isInCoda = false;
             StopCurrentCoroutine();
 
             _currentCoroutine = StartCoroutine(HideCoroutine(breBonus, endCallback));

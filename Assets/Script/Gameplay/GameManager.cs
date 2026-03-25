@@ -61,6 +61,9 @@ namespace YARG.Gameplay
         [SerializeField]
         private FailMeter _failMeter;
 
+        [SerializeField]
+        private BREBox _breBox;
+
         [field: SerializeField]
         public VocalTrack VocalTrack { get; private set; }
 
@@ -977,6 +980,21 @@ namespace YARG.Gameplay
             CheckForRewindInvalidation();
 
             return false;
+        }
+
+        public void StartCoda(CodaSection coda)
+        {
+            _breBox.StartCoda(coda);
+        }
+
+        public void EndCoda(CodaSection coda)
+        {
+            _breBox.EndCoda(coda.TotalCodaBonus, () => { });
+        }
+
+        public void ResetCoda()
+        {
+            _breBox.ForceReset();
         }
     }
 }
