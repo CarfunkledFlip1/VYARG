@@ -27,6 +27,7 @@ namespace YARG.Gameplay.Player
 
         // Key is a FourLaneDrumPad or FiveLaneDrumPad
         private Dictionary<int, HighwayOrderingInfo> _highwayOrdering;
+        private Dictionary<int, int>                 _actionToBreIndex;
 
         private int DrumsActionToHighwayIndex(DrumsAction action)
         {
@@ -111,8 +112,9 @@ namespace YARG.Gameplay.Player
         private int[] _drumSoundEffectRoundRobin = new int[8];
         private float _drumSoundEffectAccentThreshold;
 
-        private Dictionary<int, float> _fretToLastPressedTimeDelta                                  = new();
+        private Dictionary<int, float>                            _fretToLastPressedTimeDelta       = new();
         private Dictionary<Fret.AnimType, Dictionary<int, float>> _animTypeToFretToLastPressedDelta = new();
+        private Dictionary<int, int>                              _laneIndexToBreIndex;
 
         private bool IsSplitMode => Player.Profile.CurrentInstrument is Instrument.ProDrums && Player.Profile.SplitProTomsAndCymbals;
 
@@ -634,15 +636,11 @@ namespace YARG.Gameplay.Player
 
             if (Engine.IsCodaActive)
             {
-                var lanes = _fiveLaneMode ? 5 : 4;
                 // Set emission color of BRE lanes depending on time since last hit
-                for (int i = 0; i < lanes; i++)
+
+                foreach (var (k, v) in _laneIndexToBreIndex)
                 {
-                    // var intensity = CurrentCoda.GetNormalizedTimeSinceLastHit(i, visualTime);
-                    // intensity = 1 - (float) Math.Clamp(Math.Cos(Math.PI * intensity), 0f, 1f);
-                    // intensity = 1 - (float) Math.Clamp((Math.Tan(intensity) * -1) + 1, 0f, 1f);
-                    // intensity = (float) Math.Clamp((Math.Atan(intensity * 2) * -1) + 1, 0f, 1f);
-                    BRELanes[i].SetEmissionColor(CurrentCoda.GetNormalizedTimeSinceLastHit(i, visualTime));
+                    BRELanes[k].SetEmissionColor(CurrentCoda.GetNormalizedTimeSinceLastHit(v, visualTime));
                 }
             }
 
@@ -866,6 +864,24 @@ namespace YARG.Gameplay.Player
                     { (int)FiveLaneDrumPad.Orange, new(ApplyHandednessToPosition(3),                                        ApplyHandednessToFiveLaneColor(FiveLaneDrumsFret.Orange) ) },
                     { (int)FiveLaneDrumPad.Green,  new(ApplyHandednessToPosition(4),                                        ApplyHandednessToFiveLaneColor(FiveLaneDrumsFret.Green) ) }
                 };
+
+                _actionToBreIndex = new Dictionary<int, int>
+                {
+                    { 0, 0 },
+                    { 1, 1 },
+                    { 2, 2 },
+                    { 3, 3 },
+                    { 4, 4 }
+                };
+
+                _laneIndexToBreIndex = new Dictionary<int, int>
+                {
+                    { ApplyHandednessToPosition(0), 0 },
+                    { ApplyHandednessToPosition(1), 1 },
+                    { ApplyHandednessToPosition(2), 2 },
+                    { ApplyHandednessToPosition(3), 3 },
+                    { ApplyHandednessToPosition(4), 4 }
+                };
             }
             else if (Player.Profile.SplitProTomsAndCymbals && Player.Profile.CurrentInstrument is Instrument.ProDrums)
             {
@@ -879,6 +895,27 @@ namespace YARG.Gameplay.Player
                     { (int)FourLaneDrumPad.BlueDrum,      new(ApplyHandednessToPosition(4),                                          ApplyHandednessToFourLaneColor(FourLaneDrumsFret.BlueDrum)) },
                     { (int)FourLaneDrumPad.GreenCymbal,   new(ApplyHandednessToPosition(Player.Profile.SwapCrashAndRide ? 3 : 5),    ApplyHandednessToFourLaneColor(FourLaneDrumsFret.GreenCymbal)) },
                     { (int)FourLaneDrumPad.GreenDrum,     new(ApplyHandednessToPosition(6),                                          ApplyHandednessToFourLaneColor(FourLaneDrumsFret.GreenDrum)) },
+                };
+
+                _actionToBreIndex = new Dictionary<int, int>
+                {
+                    { 0,  0 }, // RedDrum
+                    { 1,  1 }, // YellowDrum
+                    { 2,  2 }, // BlueDrum
+                    { 3,  3 }, // GreenDrum
+                    { 4,  1 }, // YellowCymbal
+                    { 5,  2 }, // BlueCymbal
+                    { 6,  3 }  // GreenCymbal
+                };
+
+                _laneIndexToBreIndex = new Dictionary<int, int> {
+                    { ApplyHandednessToPosition(Player.Profile.SwapSnareAndHiHat ? 1 : 0), 0 }, // RedDrum
+                    { ApplyHandednessToPosition(2), 1 }, // YellowDrum
+                    { ApplyHandednessToPosition(4), 2 }, // BlueDrum
+                    { ApplyHandednessToPosition(6), 3 }, // GreenDrum
+                    { ApplyHandednessToPosition(Player.Profile.SwapSnareAndHiHat ? 0 : 1), 4 }, // YellowCymbal
+                    { ApplyHandednessToPosition(Player.Profile.SwapCrashAndRide ? 5 : 3), 5 }, // BlueCymbal
+                    { ApplyHandednessToPosition(Player.Profile.SwapCrashAndRide ? 3 : 5), 6 }  // GreenCymbal
                 };
             }
             else
@@ -894,7 +931,27 @@ namespace YARG.Gameplay.Player
                     { (int)FourLaneDrumPad.GreenCymbal,   new(ApplyHandednessToPosition(3), ApplyHandednessToFourLaneColor(FourLaneDrumsFret.GreenCymbal)) },
                     { (int)FourLaneDrumPad.GreenDrum,     new(ApplyHandednessToPosition(3), ApplyHandednessToFourLaneColor(FourLaneDrumsFret.GreenDrum)) },
                 };
+
+                _actionToBreIndex = new Dictionary<int, int>
+                {
+                    { 0, 0 }, // RedDrum
+                    { 1, 1 }, // YellowDrum
+                    { 2, 2 }, // BlueDrum
+                    { 3, 3 }, // GreenDrum
+                    { 4, 1 }, // YellowCymbal
+                    { 5, 2 }, // BlueCymbal
+                    { 6, 3 }, // GreenCymbal
+                };
+
+                _laneIndexToBreIndex = new Dictionary<int, int> {
+                    { ApplyHandednessToPosition(0), 0 }, // RedDrum
+                    { ApplyHandednessToPosition(1), 1 }, // YellowDrum and YellowCymbal
+                    { ApplyHandednessToPosition(2), 2 }, // BlueDrum and BlueCymbal
+                    { ApplyHandednessToPosition(3), 3 }, // GreenDrum and GreenCymbal
+                };
             }
         }
+
+        protected override Dictionary<int, int> GetLaneIndexes() => _actionToBreIndex;
     }
 }
