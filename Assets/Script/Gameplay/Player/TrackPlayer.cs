@@ -724,6 +724,12 @@ namespace YARG.Gameplay.Player
             {
                 var newLane = (LaneElement) LanePool.TakeWithoutEnabling();
 
+                if (newLane == null)
+                {
+                    YargLogger.LogWarning("Attempted to spawn BRE lane, but it's at its cap!");
+                    return;
+                }
+
                 newLane.SetTimeRange(timeStart, timeEnd);
                 InitializeSpawnedLane(newLane, i);
                 newLane.EnableFromPool();

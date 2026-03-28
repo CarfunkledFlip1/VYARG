@@ -439,7 +439,7 @@ public override bool ShouldUpdateInputsOnResume => true;
 
         private void OnLaneHit(int fret)
         {
-            // TODO: Remove dirty hack to deal with open lane
+            // Adjustment for open lane
             if (fret == 5)
             {
                 fret++;

@@ -358,7 +358,6 @@ namespace YARG.Gameplay.Player
 
         protected override void InitializeSpawnedLane(LaneElement lane, int laneIndex)
         {
-            // TODO: Need to set the color here without the benefit of knowing the note..somehow
             int highwayIndex = -1;
             HighwayOrderingInfo highwayOrderingInfo = default;
             foreach ((int index, var info) in _highwayOrdering)
@@ -404,7 +403,6 @@ namespace YARG.Gameplay.Player
             }
         }
 
-        // TODO: This is broken after the lane reordering PR
         protected override void RescaleLanesForBRE()
         {
             int subdivisions = 4;
@@ -415,7 +413,6 @@ namespace YARG.Gameplay.Player
             }
             else if (IsSplitMode)
             {
-                // Maybe this should still be 4....
                 subdivisions = 7;
             }
 

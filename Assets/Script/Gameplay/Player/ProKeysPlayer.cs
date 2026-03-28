@@ -498,7 +498,6 @@ namespace YARG.Gameplay.Player
             lane.OffsetXPosition(_currentOffset);
         }
 
-        // TODO: This isn't actually what we need to deal with BRE lanes for PK
         protected override void InitializeSpawnedLane(LaneElement lane, int index)
         {
             int noteIndex = index % 12;

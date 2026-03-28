@@ -159,17 +159,15 @@ namespace YARG.Gameplay.HUD
             if (!_manager.CodaSuccess)
             {
                 _breBoxCanvasGroup.transform.DOScale(0.01f, 0.25f);
-                _breBoxCanvasGroup.DOFade(0f, 0.25f).WaitForCompletion();
             }
             else
             {
                 _breBoxCanvasGroup.transform.DOScale(1.5f, 0.25f);
                 yield return new WaitForSeconds(2f);
-                // Fade out the box
-                yield return _breBoxCanvasGroup
-                    .DOFade(0f, 0.25f)
-                    .WaitForCompletion();
             }
+
+            // Fade out the box
+            yield return _breBoxCanvasGroup.DOFade(0f, 0.25f).WaitForCompletion();
 
             _breBox.gameObject.SetActive(false);
             _currentCoroutine = null;
@@ -195,7 +193,6 @@ namespace YARG.Gameplay.HUD
                 _breBox.gameObject.SetActive(true);
 
                 // Set preview solo box properties
-                // TODO: Fix this to use BRE text instead of solo text
                 _breFullText.text = string.Empty;
                 _breBox.sprite = _breSpriteNormal;
                 _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", 6969);
