@@ -489,13 +489,19 @@ namespace YARG.Gameplay.Player
             {
                 var note = Notes[NoteIndex];
 
-                // Skip this frame if the pool is full
+                // Skip this frame if the pool is full or note is part of a BRE
                 if (!NotePool.CanSpawnAmount(note.ChildNotes.Count + 1))
                 {
                     break;
                 }
 
                 NoteIndex++;
+
+                // Don't spawn the note if it is under a BRE
+                if (note.IsBigRockEnding)
+                {
+                    continue;
+                }
 
                 OnNoteSpawned(note);
 
@@ -1052,7 +1058,7 @@ namespace YARG.Gameplay.Player
         {
             CurrentCoda = coda;
             CurrentCoda.SetLaneIndexes(GetLaneIndexes());
-            GameManager.StartCoda(coda);
+            GameManager.StartCoda();
         }
 
         protected virtual void OnCodaEnd(CodaSection coda)

@@ -982,14 +982,14 @@ namespace YARG.Gameplay
             return false;
         }
 
-        public void StartCoda(CodaSection coda)
+        public void StartCoda()
         {
-            _breBox.StartCoda(coda);
+            _breBox.StartCoda(EngineManager);
         }
 
         public void EndCoda(CodaSection coda)
         {
-            _breBox.EndCoda(coda.TotalCodaBonus, () => { });
+            _breBox.EndCoda(EngineManager.TotalCodaBonus, () => { });
         }
 
         public void ResetCoda()

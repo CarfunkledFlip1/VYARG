@@ -37,8 +37,9 @@ namespace YARG.Gameplay.HUD
         [SerializeField]
         private TMP_ColorGradient _breGradientFail;
 
+        private EngineManager _manager;
+
         private bool _breEnded;
-        private CodaSection _coda;
 
         private bool _showingForPreview;
 
@@ -49,8 +50,9 @@ namespace YARG.Gameplay.HUD
         private float   _originalAlpha;
 
         private bool _isInCoda;
+        private bool _codaEnding;
 
-        public void StartCoda(CodaSection coda)
+        public void StartCoda(EngineManager manager)
         {
             if (_isInCoda)
             {
@@ -62,7 +64,8 @@ namespace YARG.Gameplay.HUD
             _originalScale = _breBoxCanvasGroup.transform.localScale;
             _originalAlpha = _breBoxCanvasGroup.alpha;
 
-            _coda = coda;
+            _manager = manager;
+
             _breEnded = false;
             gameObject.SetActive(true);
 
@@ -80,7 +83,7 @@ namespace YARG.Gameplay.HUD
             _breTopText.text = string.Empty;
             _breBottomText.text = string.Empty;
 
-            _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _coda.TotalCodaBonus);
+            _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _manager.TotalCodaBonus);
 
             // Fade in the box
             yield return _breBoxCanvasGroup
@@ -92,16 +95,17 @@ namespace YARG.Gameplay.HUD
         {
             if (_breEnded || _showingForPreview) return;
 
-            _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _coda.TotalCodaBonus);
+            _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _manager.TotalCodaBonus);
         }
 
         public void EndCoda(int breBonus, Action endCallback)
         {
-            if (!_isInCoda)
+            if (!_isInCoda || _codaEnding)
             {
                 return;
             }
 
+            _codaEnding = true;
             _isInCoda = false;
             StopCurrentCoroutine();
 
@@ -124,7 +128,9 @@ namespace YARG.Gameplay.HUD
             _breFullText.colorGradientPreset = _breGradientNormal;
 
             _currentCoroutine = null;
-            _coda = null;
+            _manager = null;
+            _isInCoda = false;
+            _codaEnding = false;
         }
 
         private IEnumerator HideCoroutine(int breBonus, Action endCallback)
@@ -135,7 +141,7 @@ namespace YARG.Gameplay.HUD
             _breTopText.text = string.Empty;
             _breBottomText.text = string.Empty;
 
-            var (sprite, gradient) = _coda.Success switch
+            var (sprite, gradient) = _manager.CodaSuccess switch
             {
                 true  => (_breSpriteSuccess, _breGradientSuccess),
                 false => (_breSpriteFail, _breGradientFail),
@@ -150,7 +156,7 @@ namespace YARG.Gameplay.HUD
             _breBoxCanvasGroup.transform.DOMoveY(Screen.height / 2, 0.25f);
 
             // Go away sadly if BRE failed or triumphantly engorge if successful
-            if (!_coda.Success)
+            if (!_manager.CodaSuccess)
             {
                 _breBoxCanvasGroup.transform.DOScale(0.01f, 0.25f);
                 _breBoxCanvasGroup.DOFade(0f, 0.25f).WaitForCompletion();
@@ -167,7 +173,8 @@ namespace YARG.Gameplay.HUD
 
             _breBox.gameObject.SetActive(false);
             _currentCoroutine = null;
-            _coda = null;
+            _manager = null;
+            _codaEnding = false;
 
             endCallback?.Invoke();
         }
