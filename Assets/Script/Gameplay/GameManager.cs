@@ -163,8 +163,8 @@ namespace YARG.Gameplay
         public int StarPowerActivations { get; private set; } = 0;
 
         private bool _isReplaySaved;
-
         private int _originalSleepTimeout;
+        private bool _breBoxActive;
 
         private StemMixer _mixer;
 
@@ -984,17 +984,24 @@ namespace YARG.Gameplay
 
         public void StartCoda()
         {
+            if (_breBoxActive)
+            {
+                return;
+            }
+
+            _breBoxActive = true;
             _breBox.StartCoda(EngineManager);
         }
 
         public void EndCoda(CodaSection coda)
         {
-            _breBox.EndCoda(EngineManager.TotalCodaBonus, () => { });
+            _breBox.EndCoda(EngineManager.TotalCodaBonus, () => { _breBoxActive = false; });
         }
 
         public void ResetCoda()
         {
             _breBox.ForceReset();
+            _breBoxActive = false;
         }
     }
 }

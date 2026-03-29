@@ -107,6 +107,7 @@ namespace YARG.Gameplay.HUD
 
             _codaEnding = true;
             _isInCoda = false;
+            _breEnded = true;
             StopCurrentCoroutine();
 
             _currentCoroutine = StartCoroutine(HideCoroutine(breBonus, endCallback));
@@ -135,8 +136,6 @@ namespace YARG.Gameplay.HUD
 
         private IEnumerator HideCoroutine(int breBonus, Action endCallback)
         {
-            _breEnded = true;
-
             // Hide the top and bottom text
             _breTopText.text = string.Empty;
             _breBottomText.text = string.Empty;
@@ -173,6 +172,7 @@ namespace YARG.Gameplay.HUD
             _currentCoroutine = null;
             _manager = null;
             _codaEnding = false;
+            _breEnded = true;
 
             endCallback?.Invoke();
         }

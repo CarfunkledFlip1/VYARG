@@ -168,6 +168,12 @@ namespace YARG.Gameplay.Player
                 EngineParams = (GuitarEngineParameters) Player.EngineParameterOverride;
             }
 
+            if (EngineContainer != null)
+            {
+                GameManager.EngineManager.Unregister(EngineContainer);
+                EngineContainer = null;
+            }
+
             var engine = new YargFiveFretGuitarEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
             EngineContainer = GameManager.EngineManager.Register(engine, NoteTrack.Instrument, Chart, Player.RockMeterPreset);
 

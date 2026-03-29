@@ -158,6 +158,12 @@ public override bool ShouldUpdateInputsOnResume => true;
                 EngineParams = (KeysEngineParameters) Player.EngineParameterOverride;
             }
 
+            if (EngineContainer != null)
+            {
+                GameManager.EngineManager.Unregister(EngineContainer);
+                EngineContainer = null;
+            }
+
             var engine = new YargFiveLaneKeysEngine(NoteTrack, SyncTrack, EngineParams, Player.Profile.IsBot);
             EngineContainer = GameManager.EngineManager.Register(engine, NoteTrack.Instrument, Chart, Player.RockMeterPreset);
 
