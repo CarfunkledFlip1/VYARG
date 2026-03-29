@@ -39,8 +39,6 @@ namespace YARG.Gameplay.HUD
 
         private EngineManager _manager;
 
-        private bool _breEnded;
-
         private bool _showingForPreview;
 
         private Coroutine _currentCoroutine;
@@ -49,24 +47,21 @@ namespace YARG.Gameplay.HUD
         private Vector3 _originalScale;
         private float   _originalAlpha;
 
-        private bool _isInCoda;
         private bool _codaEnding;
 
         public void StartCoda(EngineManager manager)
         {
-            if (_isInCoda)
+            if (gameObject.activeSelf)
             {
                 return;
             }
 
-            _isInCoda = true;
             _originalPosition = _breBoxCanvasGroup.transform.localPosition;
             _originalScale = _breBoxCanvasGroup.transform.localScale;
             _originalAlpha = _breBoxCanvasGroup.alpha;
 
             _manager = manager;
 
-            _breEnded = false;
             gameObject.SetActive(true);
 
             StopCurrentCoroutine();
@@ -93,21 +88,19 @@ namespace YARG.Gameplay.HUD
 
         private void Update()
         {
-            if (_breEnded || _showingForPreview) return;
+            if (_showingForPreview || _codaEnding) return;
 
             _breFullText.text = Localize.KeyFormat("Gameplay.Solo.PointsResult", _manager.TotalCodaBonus);
         }
 
         public void EndCoda(int breBonus, Action endCallback)
         {
-            if (!_isInCoda || _codaEnding)
+            if (!gameObject.activeSelf || _codaEnding)
             {
                 return;
             }
 
             _codaEnding = true;
-            _isInCoda = false;
-            _breEnded = true;
             StopCurrentCoroutine();
 
             _currentCoroutine = StartCoroutine(HideCoroutine(breBonus, endCallback));
@@ -116,7 +109,6 @@ namespace YARG.Gameplay.HUD
         public void ForceReset()
         {
             StopCurrentCoroutine();
-            _breEnded = true;
 
             _breBox.gameObject.SetActive(false);
 
@@ -130,7 +122,6 @@ namespace YARG.Gameplay.HUD
 
             _currentCoroutine = null;
             _manager = null;
-            _isInCoda = false;
             _codaEnding = false;
         }
 
@@ -172,7 +163,6 @@ namespace YARG.Gameplay.HUD
             _currentCoroutine = null;
             _manager = null;
             _codaEnding = false;
-            _breEnded = true;
 
             endCallback?.Invoke();
         }
