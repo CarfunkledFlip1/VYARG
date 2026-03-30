@@ -49,16 +49,20 @@ namespace YARG.Gameplay.HUD
 
         private bool _codaEnding;
 
+        public void Awake()
+        {
+            _originalPosition = _breBoxCanvasGroup.transform.localPosition;
+            _originalScale = _breBoxCanvasGroup.transform.localScale;
+            _originalAlpha = _breBoxCanvasGroup.alpha;
+            gameObject.SetActive(false);
+        }
+
         public void StartCoda(EngineManager manager)
         {
             if (gameObject.activeSelf)
             {
                 return;
             }
-
-            _originalPosition = _breBoxCanvasGroup.transform.localPosition;
-            _originalScale = _breBoxCanvasGroup.transform.localScale;
-            _originalAlpha = _breBoxCanvasGroup.alpha;
 
             _manager = manager;
 
@@ -113,7 +117,7 @@ namespace YARG.Gameplay.HUD
             _breBox.gameObject.SetActive(false);
 
             _breBoxCanvasGroup.transform.localPosition = _originalPosition;
-            _breBoxCanvasGroup.transform.localScale = Vector3.one;
+            _breBoxCanvasGroup.transform.localScale = _originalScale;
             _breBoxCanvasGroup.alpha = _originalAlpha;
 
             _breFullText.text = string.Empty;
