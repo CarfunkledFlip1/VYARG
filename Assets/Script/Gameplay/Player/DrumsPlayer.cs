@@ -578,6 +578,12 @@ namespace YARG.Gameplay.Player
         private void PlayDrumSoundEffect(DrumsAction action, float velocity)
         {
             int actionIndex = (int) action;
+
+            if (actionIndex == (int) DrumsAction.WildcardPad)
+            {
+                return;
+            }
+
             double sampleVolume = velocity;
 
             // Define sample
@@ -772,7 +778,7 @@ namespace YARG.Gameplay.Player
         private void AnimateFret(int pad, Fret.AnimType animType)
         {
             // Four and five lane drums have the same kick value
-            if (pad == (int) FourLaneDrumPad.Kick)
+            if (pad == (int) FourLaneDrumPad.Kick || pad == (int) FiveLaneDrumPad.Wildcard)
             {
                 _kickFretFlash.PlayHitAnimation();
                 _fretArray.PlayKickFretAnimation();
