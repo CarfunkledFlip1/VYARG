@@ -41,6 +41,7 @@ namespace YARG.Gameplay.Player
                     DrumsAction.BlueDrum => (int) FiveLaneDrumPad.Blue,
                     DrumsAction.OrangeCymbal => (int) FiveLaneDrumPad.Orange,
                     DrumsAction.GreenDrum => (int) FiveLaneDrumPad.Green,
+                    DrumsAction.WildcardPad => (int) FiveLaneDrumPad.Kick,
                     _ => throw new ArgumentOutOfRangeException(nameof(action))
                 };
             }
@@ -55,6 +56,7 @@ namespace YARG.Gameplay.Player
                 DrumsAction.YellowCymbal => (int) (Player.Profile.SplitProTomsAndCymbals ? FourLaneDrumPad.YellowCymbal : FourLaneDrumPad.YellowDrum),
                 DrumsAction.BlueCymbal =>   (int) (Player.Profile.SplitProTomsAndCymbals ? FourLaneDrumPad.BlueCymbal : FourLaneDrumPad.BlueDrum),
                 DrumsAction.GreenCymbal =>  (int) (Player.Profile.SplitProTomsAndCymbals ? FourLaneDrumPad.GreenCymbal : FourLaneDrumPad.GreenDrum),
+                DrumsAction.WildcardPad =>  (int) FourLaneDrumPad.Kick,
                 _ => throw new ArgumentOutOfRangeException(nameof(action))
             };
         }
@@ -546,7 +548,7 @@ namespace YARG.Gameplay.Player
                 PlayDrumSoundEffect(action, velocity);
             }
 
-            if (action is not DrumsAction.Kick)
+            if (action is not (DrumsAction.Kick or DrumsAction.WildcardPad))
             {
                 if (isDrumFreestyle)
                 {
@@ -922,7 +924,7 @@ namespace YARG.Gameplay.Player
                     { _highwayOrdering[(int)FourLaneDrumPad.GreenDrum].Position, 3 },
                     { _highwayOrdering[(int)FourLaneDrumPad.YellowCymbal].Position, 1 },
                     { _highwayOrdering[(int)FourLaneDrumPad.BlueCymbal].Position, 2 },
-                    { _highwayOrdering[(int)FourLaneDrumPad.GreenCymbal].Position, 3 } 
+                    { _highwayOrdering[(int)FourLaneDrumPad.GreenCymbal].Position, 3 }
                 };
             }
             else

@@ -646,6 +646,15 @@ namespace YARG.Menu.DifficultySelect
                 }
             }
 
+            // TODO: Make the parser handle this correctly so we don't have to bodge it here
+            if (profile.CurrentInstrument is (Instrument.FiveFretGuitar or Instrument.FiveFretBass
+                    or Instrument.FiveFretRhythm or
+                    Instrument.FiveLaneDrums or Instrument.FourLaneDrums or Instrument.ProDrums) &&
+                _possibleDifficulties.Contains(Difficulty.Easy))
+            {
+                _possibleDifficulties.Insert(0, Difficulty.Beginner);
+            }
+
             // TODO: Handle difficulty fallback better in play a show mode
 
             var diff = (int) profile.DifficultyFallback;
@@ -754,7 +763,7 @@ namespace YARG.Menu.DifficultySelect
             // For vocals, insert special difficulties
             if (instrument is Instrument.Vocals or Instrument.Harmony)
             {
-                return difficulty is not (Difficulty.Beginner or Difficulty.ExpertPlus);
+                return difficulty is not Difficulty.ExpertPlus;
             }
 
             // Otherwise, we can do this

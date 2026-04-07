@@ -513,7 +513,8 @@ public override bool ShouldUpdateInputsOnResume => true;
 
             (NotePool.GetByKey(note) as FiveLaneKeysNoteElement)?.HitNote();
 
-            if (note.FiveLaneKeysAction is FiveLaneKeysAction.OpenNote && !UsingOpenLane)
+            if ((note.FiveLaneKeysAction is FiveLaneKeysAction.OpenNote && !UsingOpenLane) ||
+                note.FiveLaneKeysAction is FiveLaneKeysAction.Wildcard)
             {
                 _fretArray.PlayOpenHitAnimation();
             }
@@ -546,7 +547,8 @@ public override bool ShouldUpdateInputsOnResume => true;
 
         private void OnSustainStart(GuitarNote note)
         {
-            if (note.FiveLaneKeysAction is not FiveLaneKeysAction.OpenNote || UsingOpenLane)
+            if ((note.FiveLaneKeysAction is not FiveLaneKeysAction.OpenNote || UsingOpenLane) &&
+                note.FiveLaneKeysAction is not FiveLaneKeysAction.Wildcard)
             {
                 _fretArray.SetSustained((int)GetFretIndex(note.FiveLaneKeysAction), true);
             }
