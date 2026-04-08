@@ -30,6 +30,8 @@ namespace YARG.Gameplay.Visuals
         private SustainLine _normalSustainLine;
         [SerializeField]
         private SustainLine _openSustainLine;
+        [SerializeField]
+        private SustainLine _wildcardSustainLine;
 
         private SustainLine _sustainLine;
 
@@ -103,7 +105,7 @@ namespace YARG.Gameplay.Visuals
 
                 NoteGroup = noteGroups[(int) NoteType.Wildcard];
 
-                _sustainLine = _openSustainLine;
+                _sustainLine = _wildcardSustainLine;
             }
 
             // Show and set material properties
