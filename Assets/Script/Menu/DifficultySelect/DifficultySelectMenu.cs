@@ -648,8 +648,8 @@ namespace YARG.Menu.DifficultySelect
 
             // TODO: Make the parser handle this correctly so we don't have to bodge it here
             if (profile.CurrentInstrument is (Instrument.FiveFretGuitar or Instrument.FiveFretBass
-                    or Instrument.FiveFretRhythm or
-                    Instrument.FiveLaneDrums or Instrument.FourLaneDrums or Instrument.ProDrums) &&
+                    or Instrument.FiveFretRhythm or Instrument.FiveLaneDrums or Instrument.FourLaneDrums or
+                    Instrument.ProDrums or Instrument.Keys) &&
                 _possibleDifficulties.Contains(Difficulty.Easy))
             {
                 _possibleDifficulties.Insert(0, Difficulty.Beginner);
