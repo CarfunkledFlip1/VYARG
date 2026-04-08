@@ -37,6 +37,9 @@
         },
         {
             "m_Id": "698ac95a4f1c47d48430fc6ab40981d5"
+        },
+        {
+            "m_Id": "cab7bacc115f4b5887d5dbb7a60cd221"
         }
     ],
     "m_Dropdowns": [],
@@ -501,6 +504,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "698ac95a4f1c47d48430fc6ab40981d5"
+        },
+        {
+            "m_Id": "cab7bacc115f4b5887d5dbb7a60cd221"
         }
     ]
 }
@@ -1587,8 +1593,8 @@
     "m_ObjectId": "a2515386c262445594dc8071fd29c056",
     "m_Title": "Emission",
     "m_Position": {
-        "x": -650.0001220703125,
-        "y": 313.0
+        "x": -650.0000610351563,
+        "y": 312.9999694824219
     }
 }
 
@@ -1970,6 +1976,34 @@
     "m_Property": {
         "m_Id": "3dbf9caef9ff4dd683b855075c9b72de"
     }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.ShaderKeyword",
+    "m_ObjectId": "cab7bacc115f4b5887d5dbb7a60cd221",
+    "m_Guid": {
+        "m_GuidSerialized": "131b6c41-a757-48bb-8144-3c68148a240b"
+    },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
+    "m_Name": "OFFSET_V",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "OFFSET_V",
+    "m_DefaultReferenceName": "_OFFSET_V",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_KeywordType": 0,
+    "m_KeywordDefinition": 0,
+    "m_KeywordScope": 0,
+    "m_KeywordStages": 63,
+    "m_Entries": [],
+    "m_Value": 0,
+    "m_IsEditable": true
 }
 
 {
