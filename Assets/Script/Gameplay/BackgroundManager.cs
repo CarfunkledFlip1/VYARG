@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Cinemachine;
+using Unity.Cinemachine;
 using Cysharp.Threading.Tasks;
 using UniHumanoid;
 using UnityEngine;
@@ -624,7 +624,7 @@ namespace YARG.Gameplay
                 lookat.SetSources(sources);
             }
 
-            var cinemachines = venueRoot.GetComponentsInChildren<CinemachineVirtualCamera>(true);
+            var cinemachines = venueRoot.GetComponentsInChildren<CinemachineCamera>(true);
             foreach (var cinemachine in cinemachines)
             {
                 // If we can easily determine face/hips, we use the corresponding transform on the VRM character, otherwise we default to hips if set, otherwise newObject.transform

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using YARG.Core.Chart;
 using YARG.Gameplay;
@@ -9,7 +10,7 @@ namespace YARG.Venue.VenueCamera
     /// <summary>
     /// Data storage for venue camera
     /// </summary>
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(CinemachineCamera))]
     public class VenueCamera : GameplayBehaviour
     {
         [SerializeField]
@@ -27,11 +28,11 @@ namespace YARG.Venue.VenueCamera
         public List<CameraCutEvent.CameraCutSubject> CameraCutSubjects;
 
         [NonSerialized]
-        public Camera Camera;
+        public CinemachineCamera Camera;
 
         protected override void GameplayAwake()
         {
-            Camera = GetComponent<Camera>();
+            Camera = GetComponent<CinemachineCamera>();
         }
     }
 }

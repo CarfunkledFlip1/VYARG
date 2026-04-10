@@ -294,7 +294,7 @@ namespace YARG.Venue.Characters
                 return;
             }
 
-            var cam = _cameraManager?.CurrentCamera;
+            var cam = _cameraManager?.LiveCamera;
             if (cam == null)
             {
                 return;

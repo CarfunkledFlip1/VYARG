@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using YARG.Core.Chart;
@@ -9,6 +10,7 @@ using YARG.Gameplay;
 using YARG.Helpers.Extensions;
 using YARG.Playback;
 using YARG.Settings;
+using YARG.Venue.Characters;
 using YARG.Venue.VolumeComponents;
 using Random = UnityEngine.Random;
 
@@ -95,20 +97,21 @@ namespace YARG.Venue.VenueCamera
         [SerializeField]
         private GameObject _venue;
 
-        public Camera CurrentCamera { get; private set; }
+        public CinemachineCamera CurrentCamera { get; private set; }
+        public Camera LiveCamera { get; private set; }
 
-        private List<Camera>  _cameras;
+        private List<CinemachineCamera>  _cameras;
 
         private List<CameraCutEvent> _cameraCuts;
         private int                  _currentCutIndex;
 
-        private readonly Dictionary<CameraLocation, Camera>                        _cameraLocations    = new();
-        private          Dictionary<CameraCutEvent.CameraCutSubject, List<Camera>> _subjectToCameraMap = new();
+        private readonly Dictionary<CameraLocation, CinemachineCamera>                        _cameraLocations    = new();
+        private          Dictionary<CameraCutEvent.CameraCutSubject, List<CinemachineCamera>> _subjectToCameraMap = new();
 
-        private List<Camera> _nearCameras = new();
-        private List<Camera> _farCameras = new();
-        private List<Camera> _frontCameras = new();
-        private List<Camera> _behindCameras = new();
+        private List<CinemachineCamera> _nearCameras = new();
+        private List<CinemachineCamera> _farCameras = new();
+        private List<CinemachineCamera> _frontCameras = new();
+        private List<CinemachineCamera> _behindCameras = new();
 
         private bool _useCameraTimer;
 
@@ -117,24 +120,58 @@ namespace YARG.Venue.VenueCamera
         private bool  _volumeSet;
 
         private bool _isPostProcessingEnabled;
+        private CharacterManager _characterManager;
+        private CinemachineImpulseSource _impulseSource;
+
+        private readonly PrioritySettings _disabledPriority = new() { Enabled = false };
+        private readonly PrioritySettings _enabledPriority  = new() { Enabled = true, Value = 100 };
 
         protected override void OnChartLoaded(SongChart chart)
         {
             _volumeSet = _profile != null;
 
-            var cameras = _venue.GetComponentsInChildren<Camera>(true);
+            if (_venue == null)
+            {
+                _venue = gameObject;
+            }
+            else
+            {
+                _characterManager = _venue.GetComponentInChildren<CharacterManager>();
+                if (_characterManager != null)
+                {
+                    _characterManager.OnKick += OnKick;
+                }
+
+                _impulseSource = _venue.GetComponentInChildren<CinemachineImpulseSource>();
+                if (_impulseSource == null)
+                {
+                    YargLogger.LogWarning("No CinemachineImpulseSource found in venue");
+                }
+            }
+
+            var cameras = _venue.GetComponentsInChildren<CinemachineCamera>(true);
             _cameras = cameras.ToList();
 
 
             var layerMask = LayerMask.GetMask("Venue");
+            var mainCam = GetComponent<Camera>();
+            if (mainCam != null)
+            {
+                LiveCamera = mainCam;
+                var cameraData = mainCam.GetUniversalAdditionalCameraData();
+                cameraData.volumeLayerMask = layerMask;
+
+                if (mainCam.GetComponent<VenueCameraRenderer>() == null)
+                {
+                    mainCam.gameObject.AddComponent<VenueCameraRenderer>();
+                }
+            }
 
             // Set up the cameras and make the stage camera active to start
             bool foundStage = false;
             foreach (var camera in cameras)
             {
                 var vc = camera.GetComponent<VenueCamera>();
-
-                camera.enabled = false;
 
                 if (vc == null)
                 {
@@ -164,7 +201,7 @@ namespace YARG.Venue.VenueCamera
                     // Check that the list for this subject has been initialized
                     if (!_subjectToCameraMap.ContainsKey(subject))
                     {
-                        _subjectToCameraMap.Add(subject, new List<Camera> {camera} );
+                        _subjectToCameraMap.Add(subject, new List<CinemachineCamera> {camera} );
                     }
 
                     _subjectToCameraMap[subject].Add(camera);
@@ -176,25 +213,22 @@ namespace YARG.Venue.VenueCamera
                     CurrentCamera = camera;
                     _cameraTimer = GetRandomCameraTimer();
                     _cameraIndex = _cameras.IndexOf(camera);
+                    camera.Priority = _enabledPriority;
                     foundStage = true;
                 }
                 else
                 {
-                    camera.gameObject.SetActive(false);
+                    camera.Priority = _disabledPriority;
                 }
 
                 _cameraLocations[vc.CameraLocation] = camera;
                 _validLocations.Add(vc.CameraLocation);
 
-                // Add VenueCameraHelper component to cameras that don't already have it
-                if (camera.GetComponent<VenueCameraRenderer>() == null)
+                if (camera.GetComponent<CinemachineVolumeSettings>() == null)
                 {
-                    camera.gameObject.AddComponent<VenueCameraRenderer>();
+                    var settings = camera.gameObject.AddComponent<CinemachineVolumeSettings>();
+                    settings.Profile = _profile;
                 }
-
-                // Make sure the camera is using the correct volume mask (Venue)
-                var cameraData = camera.GetUniversalAdditionalCameraData();
-                cameraData.volumeLayerMask = layerMask;
             }
 
             _postProcessingEvents = chart.VenueTrack.PostProcessing;
@@ -303,6 +337,15 @@ namespace YARG.Venue.VenueCamera
             }
         }
 
+        private void OnKick()
+        {
+            // Send impulse to cameras that have the component
+            if (_impulseSource != null)
+            {
+                _impulseSource.GenerateImpulse();
+            }
+        }
+
         public void ResetTime(double time)
         {
             // Reset camera cut index
@@ -320,7 +363,7 @@ namespace YARG.Venue.VenueCamera
             ResetPostProcessing(time);
         }
 
-        private void SwitchCamera(Camera newCamera, bool random = false)
+        private void SwitchCamera(CinemachineCamera newCamera, bool random = false)
         {
             if (random)
             {
@@ -338,9 +381,9 @@ namespace YARG.Venue.VenueCamera
                 return;
             }
 
-            CurrentCamera.gameObject.SetActive(false);
+            CurrentCamera.Priority = _disabledPriority;
             CurrentCamera = newCamera;
-            CurrentCamera.gameObject.SetActive(true);
+            CurrentCamera.Priority = _enabledPriority;
             _cameraIndex = _cameras.IndexOf(CurrentCamera);
         }
 
@@ -349,13 +392,13 @@ namespace YARG.Venue.VenueCamera
             return Random.Range(1f, 4f);
         }
 
-        private Camera GetRandomCamera()
+        private CinemachineCamera GetRandomCamera()
         {
             var index = Random.Range(0, _cameras.Count - 1);
             return _cameras[index];
         }
 
-        private Camera MapSubjectToValidCamera(CameraCutEvent cut)
+        private CinemachineCamera MapSubjectToValidCamera(CameraCutEvent cut)
         {
             var subject = cut.Subject;
             var hasConstraint = cut.Constraint != CameraCutEvent.CameraCutConstraint.None;
@@ -386,7 +429,7 @@ namespace YARG.Venue.VenueCamera
                         }
                     }
 
-                    List<Camera> cameras;
+                    List<CinemachineCamera> cameras;
 
                     if (choices.Count > 0)
                     {
@@ -471,7 +514,7 @@ namespace YARG.Venue.VenueCamera
             return filteredLocations[0];
         }
 
-        private List<Camera> FilterCamerasByConstraint(CameraCutEvent cut, List<Camera> cameras)
+        private List<CinemachineCamera> FilterCamerasByConstraint(CameraCutEvent cut, List<CinemachineCamera> cameras)
         {
             var hasConstraint = cut.Constraint != CameraCutEvent.CameraCutConstraint.None;
             if (!hasConstraint)
@@ -483,7 +526,7 @@ namespace YARG.Venue.VenueCamera
 
             var constraint = (int) cut.Constraint;
 
-            var validCams = new List<Camera>(cameras);
+            var validCams = new List<CinemachineCamera>(cameras);
 
             foreach (var value in Enum.GetValues(typeof(CameraCutEvent.CameraCutConstraint)))
             {
@@ -506,7 +549,7 @@ namespace YARG.Venue.VenueCamera
             return validCams;
         }
 
-        private List<Camera> GetCamerasForConstraint(CameraCutEvent.CameraCutConstraint constraint)
+        private List<CinemachineCamera> GetCamerasForConstraint(CameraCutEvent.CameraCutConstraint constraint)
         {
             var validCams = constraint switch
             {
@@ -529,8 +572,10 @@ namespace YARG.Venue.VenueCamera
             _brightCurveParam.Release();
             _copierCurveParam.Release();
 
-            // Enable the camera in case it happens to be disabled
-            CurrentCamera.enabled = true;
+            if (_characterManager != null)
+            {
+                _characterManager.OnKick -= OnKick;
+            }
 
             SettingsManager.Settings.VenuePostProcessing.OnChange -= SetPostProcessingEnabled;
             GameManager.BeatEventHandler?.Audio.Unsubscribe(BeatHandler);

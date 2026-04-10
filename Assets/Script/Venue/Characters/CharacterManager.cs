@@ -74,6 +74,9 @@ namespace YARG.Venue.Characters
 
         public double SongTime => GameManager.SongTime;
 
+        public delegate void KickEvent();
+        public KickEvent OnKick;
+
         protected override void OnChartLoaded(SongChart chart)
         {
             // Get the expert notes for each track
@@ -489,6 +492,12 @@ namespace YARG.Venue.Characters
                 if (note.NextNote == null || note.NextNote.Time > GameManager.SongTime + _currentTempo.SecondsPerBeat * 2)
                 {
                     character.StopAnimation();
+                }
+
+                // If this is a kick, fire the kick event
+                if (note.Pad == (int)FourLaneDrumPad.Kick)
+                {
+                    OnKick?.Invoke();
                 }
             }
 
