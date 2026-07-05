@@ -258,6 +258,9 @@ namespace YARG.Settings
             public VolumeSetting SfxVolume { get; } =
                 new(0.8f, v => GlobalAudioHandler.SetVolumeSetting(SongStem.Sfx, v));
 
+            public VolumeSetting VenueSfxVolume { get; } =
+                new(0.8f, v => GlobalAudioHandler.SetVolumeSetting(SongStem.VenueSample, v));
+
             public VolumeSetting DrumSfxVolume { get; } =
                 new(0.8f, v => GlobalAudioHandler.SetVolumeSetting(SongStem.DrumSfx, v));
 
@@ -294,6 +297,8 @@ namespace YARG.Settings
                 CrowdFxMode.StarpowerClapsOnly,
                 CrowdFxMode.Enabled
             };
+
+            public ToggleSetting UseVenueSfx { get; } = new(true);
 
             public ToggleSetting OverstrumAndOverhitSoundEffects { get; } = new(true);
 
