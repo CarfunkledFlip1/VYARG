@@ -1,4 +1,4 @@
-{
+﻿{
     "Language": {
         "Name": "Português",
         "Region": "Portugal",
@@ -161,6 +161,7 @@
             "Repos": {
                 "Community": "Comunidade",
                 "OpenSource": "Código aberto",
+                "YALCY": "YALCY",
                 "YARC-Charters": "A Lista Oficial do YARG",
                 "YARC-Launcher": "O Lançador YARC",
                 "YARG": "YARG"
@@ -193,6 +194,7 @@
                 "AlbumCover": "Album Cover By: {0}",
                 "ChartedBy": "Charted By: {0}",
                 "License": "Song License: {0}",
+                "Background": "Background Visual Media By: {0}",
                 "Written": "Written",
                 "Composed": "Composed",
                 "Arranged": "Arranged",
@@ -279,7 +281,7 @@
             "PlayWithReplay": "Play With Replay"
         },
         "Main": {
-            "MessageOfTheDay": "<align=center><size=32><b>Welcome to the v0.15 nightlies!</b></size></align>\n\nv0.15 now has support for tremolo/trill lanes, customizable track backgrounds (including transparency), custom vocal characters for venues, advanced player performance tracking, repositionable highways, adds new in game calibration tools, and more! Oh, and the new and improved music library is finally here, including advanced song filters so even the largest library can't keep you from finding what you're looking for! :D\n\n<b>If you have any feedback or find any bugs, please let us know on Discord or GitHub.</b>\n\nHappy YARGin'!",
+            "MessageOfTheDay": "<align=center><size=32><b>Welcome to v0.15!</b></size></align>\n\nv0.15 is a major update that adds many highly requested and necessary gameplay features such as roll/trill lanes and Big \"YARG\" endings, as well as revamped user interface in the song selection and results screen, drum lane customization, automatic genre categorization, experimental custom vocalist characters in venues, and more.\n\n<b>If you have any feedback or find any bugs, please let us know on Discord or GitHub.</b>\n\nHappy YARGin'!",
             "Options": {
                 "Quickplay": "Jogo rápido",
                 "Practice": "Praticar",
@@ -310,14 +312,14 @@
             "Popup": {
                 "Header": {
                     "SortBy": "Sort By...",
-                    "GoTo": "Go To...",
-                    "SelectPlaylists": "Select Playlists"
+                    "GoToSection": "Go To Section...",
+                    "AddToPlaylist": "Add To Playlist..."
                 },
                 "Item": {
                     "RandomSong": "Random Song",
                     "BackToTop": "Back to Top",
                     "ScanSongs": "Scan Songs",
-                    "SortBy": "Sort By: {0}",
+                    "SortBy": "Sort By...",
                     "GoToSection": "Go To Section...",
                     "AddToFavorites": "Add To Favorites",
                     "RemoveFromFavorites": "Remove From Favorites",
@@ -352,6 +354,7 @@
             "PlaylistAddedToSet": "Added {0:N0} Songs From Playlist To Setlist",
             "StartSet": "Start The Set",
             "PlayShow": "Play A Show",
+            "HoldPlayShow": "(Hold) Play A Show",
             "Filters": "Filters",
             "NoSongsInPlaylist": "No Songs In Playlist",
             "CannotAddToSelf": "No, I will not create an ouroboros for you. Nice try, Jaden.",
@@ -574,6 +577,48 @@
             "4LaneHeader": "4-Lane Drums Highway Configuration",
             "ProHeader": "Pro Drums Highway Configuration",
             "5LaneHeader": "5-Lane Drums Highway Configuration"
+        },
+        "Pause": {
+            "Generic": {
+                "Resume": "Resume",
+                "Restart": "Restart",
+                "BackToLibrary": "Back To Library",
+                "Settings": "Settings",
+                "Practice": "Practice"
+            },
+            "Fail": {
+                "EnableNoFailandResume": "Enable No Fail and Resume",
+                "EnableNoFailandRestart": "Enable No Fail and Restart"
+            },
+            "Practice": {
+                "SetAPosition": "Set A Position",
+                "SetBPosition": "Set B Position",
+                "ClearAB": "Clear A/B",
+                "SelectNewSections": "Select New Sections",
+                "Quickplay": "Quickplay"
+            },
+            "Quickplay": {
+                "SaveReplay": "Save Replay"
+            },
+            "Replay": {
+                "SaveColorProfile": "Save Color Profile"
+            },
+            "Setlist": {
+                "Skip": "Skip"
+            },
+            "QuickSettings": {
+                "AudioSettings": "Audio Settings",
+                "EditHud": "Edit HUD",
+                "NoFail": {
+                    "Enable": "Enable No Fail",
+                    "Disable": "Disable No Fail"
+                },
+                "VenuePP": {
+                    "Enable": "Enable Venue Post Processing",
+                    "Disable": "Disable Venue Post Processing"
+                },
+                "Calibration": "Calibration Settings"
+            }
         }
     },
     "Gameplay": {
@@ -763,6 +808,9 @@
                 "WithNumber": "{0} {1}",
                 "PercentageBased": "{0}% - {1}%"
             }
+        },
+        "UnisonDisplay": {
+            "Header": "Unison Bonus"
         }
     },
     "Preview": {
@@ -959,6 +1007,7 @@
             "ExportSongsJson": "Ouvert (JSON)",
             "ExportSongsText": "Plain Text",
             "ExportSongsCsv": "CSV",
+            "ExportSongsWeb": "Web Page",
             "OpenCalibrator": "Abrir Calibração",
             "OpenVenueFolder": "Abrir Pasta de Fundos/Locais",
             "AddFolder": "Adicionar Pasta",
@@ -995,6 +1044,15 @@
                 "Dropdown": {
                     "Measures": "In Measures",
                     "Seconds": "In Seconds",
+                    "Disabled": "Disabled"
+                }
+            },
+            "UnisonDisplay": {
+                "Name": "Unison Display",
+                "Description": "Choose how unison bonuses should be displayed during a song.",
+                "Dropdown": {
+                    "Always": "Always",
+                    "MultiplayerOnly": "Multiplayer Only",
                     "Disabled": "Disabled"
                 }
             },
@@ -1113,6 +1171,10 @@
             "FpsCap": {
                 "Name": "Limite de FPS",
                 "Description": "O limite de taxa de frames. <color=white>NÃO PRECISAS JOGAR YARG A 1000 FPS.</color> Recomenda-se o uso de VSync."
+            },
+            "BackgroundFpsCap": {
+                "Name": "Background FPS Cap",
+                "Description": "Caps the framerate while YARG is unfocused (tabbed out) to lower CPU/GPU usage, then restores it when focus returns. Set to 0 to disable."
             },
             "FpsStats": {
                 "Name": "Mostrar Contador de FPS",
@@ -1327,6 +1389,10 @@
                 "Name": "Output Device",
                 "Description": "The interface to use when playing sounds."
             },
+            "EnablePlayAShow": {
+                "Name": "Enable Play A Show",
+                "Description": "Enable or disable play a show feature from the library"
+            },
             "PlayAShowTimeout": {
                 "Name": "Show Selection Timeout",
                 "Description": "The amount of time to wait for votes before picking a song or refreshing the categories."
@@ -1438,6 +1504,10 @@
                     "Enabled": "Enabled"
                 }
             },
+            "UseVenueSfx": {
+                "Name": "Use Venue SFX",
+                "Description": "If enabled, venues will be allowed to play custom sound effects."
+            },
             "UseWhammyFx": {
                 "Name": "Use Whammy SFX",
                 "Description": "If enabled, it will add pitch bending to guitar stems when the player presses the whammy bar.\nWARNING: This setting is known to cause audio desync issues on some machines."
@@ -1479,6 +1549,10 @@
                     "Performance": "Performance",
                     "UltraPerformance": "Ultra Performance"
                 }
+            },
+            "VenueSfxVolume": {
+                "Name": "Venue SFX Volume",
+                "Description": "Adjusts the volume of custom venue sound effects."
             },
             "VideoCalibration": {
                 "Name": "Video Calibration (ms)",
@@ -1528,15 +1602,19 @@
             },
             "PauseOnFocusLoss": {
                 "Name": "Pause On Focus Loss",
-                "Description": "Pauses the game if it tabbed out/loses focus in the middle of a song."
+                "Description": "Pauses the game if it's tabbed out/loses focus in the middle of a song."
             },
             "MuteOnFocusLoss": {
                 "Name": "Mute On Focus Loss",
-                "Description": "Mutes all game audio when the game is tabbed out/loses focus, including menu music. Audio is restored when focus returns."
+                "Description": "Mutes all game audio if the game is tabbed out/loses focus, including menu music. Audio is restored when focus returns."
             },
             "ApplyVolumesInMusicLibrary": {
                 "Name": "Apply Volume Settings to Music Library Previews",
-                "Description": "Volume settings for specific instrumments will be applied in the Music Library as well."
+                "Description": "Volume settings for specific instruments will be applied in the Music Library as well."
+            },
+            "ApplyVolumesInMusicPlayer": {
+                "Name": "Apply Volume Settings to Music Player",
+                "Description": "Volume settings for specific instruments will be applied to the menu music as well. Takes effect on the next song."
             },
             "DataStreamEnable": {
                 "Name": "Enable UDP data stream",

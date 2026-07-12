@@ -1,4 +1,4 @@
-{
+﻿{
     "Language": {
         "Name": "Italiano",
         "Region": "Stati uniti",
@@ -60,10 +60,10 @@
             "HoposToTaps": "HOPO in Tap",
             "NoteShuffle": "Mix Di Note",
             "NoKicks": "Nessun Pedale",
-            "TapsToHopos": "Tap in HOPO",
-            "UnpitchedOnly": "Solo Non Intonate",
-            "NoDynamics": "Nessuna Dinamica",
-            "NoVocalPercussion": "Nessuna Percussione",
+            "TapsToHopos": "Tappa in HOPO",
+            "UnpitchedOnly": "Solo non intonate",
+            "NoDynamics": "Nessuna dinamica",
+            "NoVocalPercussion": "Nessuna percussione",
             "RangeCompress": "Senza cambi di posizione",
             "OpensToGreens": "Apre ai Verdi"
         },
@@ -161,6 +161,7 @@
             "Repos": {
                 "Community": "Comunità",
                 "OpenSource": "OpenSource",
+                "YALCY": "YALCY",
                 "YARC-Charters": "La Scaletta Ufficiale di YARG",
                 "YARC-Launcher": "YARC Launcher",
                 "YARG": "YARG"
@@ -193,6 +194,7 @@
                 "AlbumCover": "Copertina Dell'Album Da: {0}",
                 "ChartedBy": "Tracciato Da: {0}",
                 "License": "Licenza Brano: {0}",
+                "Background": "Sfondo media visivo da: {0}",
                 "Written": "Scritto",
                 "Composed": "Composto",
                 "Arranged": "Arrangiato",
@@ -279,7 +281,7 @@
             "PlayWithReplay": "Riproduci con Replay"
         },
         "Main": {
-            "MessageOfTheDay": "<align=center><size=32><b>Benvenuto nella v0.15 notti!</b></size></align>\n\nv0.15 ora ha il supporto per corsie tremolo/trill, sfondi di traccia personalizzabili (compresa la trasparenza), caratteri vocali personalizzati per le ambientazioni, il monitoraggio avanzato delle prestazioni del giocatore, tastiere riposizionabili, aggiunge nuovi strumenti di calibrazione del gioco, e altro ancora! Oh, e la nuova e migliorata libreria musicale è finalmente qui, inclusi i filtri di canzoni avanzati, quindi anche la più grande biblioteca non può impedirti di trovare quello che stai cercando! :D\n\n<b>Se hai qualche feedback o trovi qualche bug, facci sapere su Discord o GitHub.</b>\n\nFelice YARGin'!",
+            "MessageOfTheDay": "<align=center><size=32><b>Benvenuto in v0.15!</b></size></align>\n\nv0.15 è un importante aggiornamento che aggiunge molte caratteristiche di gioco altamente richieste e necessarie come le corsie roll/trill e finali Big \"YARG\", così come un'interfaccia utente rinnovata nella selezione dei brani e nella schermata dei risultati, la personalizzazione delle corsie batteria, categorizzazione automatica del genere, caratteri sperimentali personalizzati del cantante nelle location, e altro ancora.\n\n<b>Se hai qualche commento o trovi qualche bug, facci sapere su Discord o GitHub.</b>\n\nBuon YARGin'!",
             "Options": {
                 "Quickplay": "Partita Veloce",
                 "Practice": "Pratica",
@@ -310,14 +312,14 @@
             "Popup": {
                 "Header": {
                     "SortBy": "Ordina Per...",
-                    "GoTo": "Vai A...",
-                    "SelectPlaylists": "Seleziona Playlist"
+                    "GoToSection": "Vai alla Sezione...",
+                    "AddToPlaylist": "Aggiungi a Playlist..."
                 },
                 "Item": {
                     "RandomSong": "Brano Casuale",
                     "BackToTop": "Torna All'Inizio",
                     "ScanSongs": "Scansiona Brani",
-                    "SortBy": "Ordina Per: {0}",
+                    "SortBy": "Ordina per...",
                     "GoToSection": "Vai Alla Sezione...",
                     "AddToFavorites": "Aggiungi Ai Preferiti",
                     "RemoveFromFavorites": "Rimuovi Dai Preferiti",
@@ -352,6 +354,7 @@
             "PlaylistAddedToSet": "Aggiunti {0:N0} brani dalla Playlist alla Scaletta",
             "StartSet": "Avvia Il Set",
             "PlayShow": "Inizia a suonare",
+            "HoldPlayShow": "(Hold) Play A Show",
             "Filters": "Filtri",
             "NoSongsInPlaylist": "Nessun Brano In Playlist",
             "CannotAddToSelf": "No, non creerò un ouroboros per te. Bel tentativo, Jaden.",
@@ -574,6 +577,48 @@
             "4LaneHeader": "Configurazione Tastiera Batteria 4 Corsie",
             "ProHeader": "Configurazione Tastiera Batteria Pro",
             "5LaneHeader": "Configurazione Tastiera Batteria 5 Corsie"
+        },
+        "Pause": {
+            "Generic": {
+                "Resume": "Riprendi",
+                "Restart": "Ricomincia",
+                "BackToLibrary": "Torna alla Libreria",
+                "Settings": "Impostazioni",
+                "Practice": "Pratica"
+            },
+            "Fail": {
+                "EnableNoFailandResume": "Abilita No Fallimento e riprendi",
+                "EnableNoFailandRestart": "Abilita No Fallimento e Riavvia"
+            },
+            "Practice": {
+                "SetAPosition": "Imposta una posizione",
+                "SetBPosition": "Imposta posizione B",
+                "ClearAB": "Cancella A/B",
+                "SelectNewSections": "Seleziona nuove sezioni",
+                "Quickplay": "Partita Veloce"
+            },
+            "Quickplay": {
+                "SaveReplay": "Salva Replay"
+            },
+            "Replay": {
+                "SaveColorProfile": "Salva Profilo Colori"
+            },
+            "Setlist": {
+                "Skip": "Salta"
+            },
+            "QuickSettings": {
+                "AudioSettings": "Impostazioni Audio",
+                "EditHud": "Modifica HUD",
+                "NoFail": {
+                    "Enable": "Abilita No Fallimento",
+                    "Disable": "Disabilita No Fallimento"
+                },
+                "VenuePP": {
+                    "Enable": "Abilita Post Elaborazione Location",
+                    "Disable": "Disabilita Post Elaborazione Location"
+                },
+                "Calibration": "Impostazioni di calibrazione"
+            }
         }
     },
     "Gameplay": {
@@ -763,6 +808,9 @@
                 "WithNumber": "{0} {1}",
                 "PercentageBased": "{0}% - {1}%"
             }
+        },
+        "UnisonDisplay": {
+            "Header": "Unison Bonus"
         }
     },
     "Preview": {
@@ -959,6 +1007,7 @@
             "ExportSongsJson": "Ouvert (JSON)",
             "ExportSongsText": "Testo semplice",
             "ExportSongsCsv": "CSV",
+            "ExportSongsWeb": "Web Page",
             "OpenCalibrator": "Apri Calibratore",
             "OpenVenueFolder": "Apri la Cartella Sfondi/Luoghi",
             "AddFolder": "Aggiungi Cartella",
@@ -996,6 +1045,15 @@
                     "Measures": "In Battute",
                     "Seconds": "In Secondi",
                     "Disabled": "Disabilitato"
+                }
+            },
+            "UnisonDisplay": {
+                "Name": "Unison Display",
+                "Description": "Choose how unison bonuses should be displayed during a song.",
+                "Dropdown": {
+                    "Always": "Always",
+                    "MultiplayerOnly": "Multiplayer Only",
+                    "Disabled": "Disabled"
                 }
             },
             "OverstrumAndOverhitSoundEffects": {
@@ -1114,6 +1172,10 @@
                 "Name": "Limite FPS",
                 "Description": "Regola il limite del framerate. <color=white>NON HAI BISOGNO DI GIOCARE A YARG A 1000FPS.</color> Raccomandato l'uso del VSync."
             },
+            "BackgroundFpsCap": {
+                "Name": "Limite FPS Sfondo",
+                "Description": "Limita il framerate mentre YARG non è in primo piano (ridotto a icona) per abbassare l'utilizzo della CPU/GPU, quindi lo ripristina quando torna in primo piano. Impostare a 0 per disabilitare."
+            },
             "FpsStats": {
                 "Name": "Mostra Contatore FPS",
                 "Description": "Mostra l'indicatore di framerate nella Barra di Stato."
@@ -1165,12 +1227,12 @@
             },
             "HighScoreHistory": {
                 "Name": "Cronologia record",
-                "Description": "Changes which score or percentage record is used for high score information displayed in the Music Library.",
+                "Description": "Cambia quale record di punteggio o percentuale viene usato per l'informazione punteggio alto mostrata nella Libreria Musicale.",
                 "Dropdown": {
-                    "HighestPercentageOverall": "Best percentage across all difficulties",
-                    "HighestPercentageDifficulty": "Best percentage on highest-played difficulty",
-                    "HighestScoreOverall": "Highest score across all difficulties",
-                    "HighestScoreDifficulty": "Highest score on highest-played difficulty"
+                    "HighestPercentageOverall": "Miglior percentuale fra tutte le difficoltà",
+                    "HighestPercentageDifficulty": "Miglior percentuale nella difficoltà maggiore giocata",
+                    "HighestScoreOverall": "Punteggio più alto fra tutte le difficoltà",
+                    "HighestScoreDifficulty": "Punteggio più alto sulla difficoltà più giocata"
                 }
             },
             "HighwayTiltMultiplier": {
@@ -1327,6 +1389,10 @@
                 "Name": "Dispositivo di Output",
                 "Description": "L'interfaccia da usare durante la riproduzione dei suoni."
             },
+            "EnablePlayAShow": {
+                "Name": "Enable Play A Show",
+                "Description": "Enable or disable play a show feature from the library"
+            },
             "PlayAShowTimeout": {
                 "Name": "Mostra Timeout Selezione",
                 "Description": "La quantità di tempo per aspettare i voti prima di scegliere una canzone o aggiornare le categorie."
@@ -1438,6 +1504,10 @@
                     "Enabled": "Abilitato"
                 }
             },
+            "UseVenueSfx": {
+                "Name": "Usa Sfx Location",
+                "Description": "Se abilitato, le location potranno riprodurre effetti sonori personalizzati."
+            },
             "UseWhammyFx": {
                 "Name": "Effetti Sonori Vibrato",
                 "Description": "Se abilitati, modifica l'intonazione della nota prolungata della chitarra quando il giocatore utilizza la barra del vibrato.\nATTENZIONE: Quest'impostazione è solita causare problemi di sincronizzazione dell'audio in alcune macchine."
@@ -1479,6 +1549,10 @@
                     "Performance": "Prestazioni",
                     "UltraPerformance": "Prestazioni ultra"
                 }
+            },
+            "VenueSfxVolume": {
+                "Name": "Volume SFX Location",
+                "Description": "Regola il volume degli effetti sonori delle location personalizzate."
             },
             "VideoCalibration": {
                 "Name": "Calibrazione Video (ms)",
@@ -1528,15 +1602,19 @@
             },
             "PauseOnFocusLoss": {
                 "Name": "Pausa in Perdita di Focus",
-                "Description": "Mette in pausa il gioco se esso viene ridotto il focus o si smette di giocare durante un brano."
+                "Description": "Mette in pausa il gioco se viene ridotto a icona / passa in secondo piano nel mezzo di una canzone."
             },
             "MuteOnFocusLoss": {
-                "Name": "Mute On Focus Loss",
-                "Description": "Mutes all game audio when the game is tabbed out/loses focus, including menu music. Audio is restored when focus returns."
+                "Name": "Muto se in secondo piano",
+                "Description": "Muta tutto l'audio del gioco se il gioco è stato ridotto a icona/passa in secondo piano, inclusa la musica del menu. L'audio viene ripristinato quando torna in primo piano."
             },
             "ApplyVolumesInMusicLibrary": {
                 "Name": "Applica l'impostazione del volume nelle anteprime della libreria musicale",
                 "Description": "Le impostazioni del volume per strumenti specifici saranno applicate anche nella Libreria Musicale."
+            },
+            "ApplyVolumesInMusicPlayer": {
+                "Name": "Applica impostazioni volume a Lettore Musicale",
+                "Description": "Le impostazioni del volume per strumenti specifici saranno applicate anche alla musica del menu. Ha effetto dal brano successivo."
             },
             "DataStreamEnable": {
                 "Name": "Abilita flusso dati UDP",
@@ -1596,7 +1674,7 @@
             },
             "PlaybackBufferLength": {
                 "Name": "Lunghezza Buffer di Riproduzione",
-                "Description": "The size of the playback buffer, in milliseconds. Set to 0 to disable. Larger buffers provide more stability, but increase the latency of sound effects."
+                "Description": "La dimensione del buffer di riproduzione, in millisecondi. Imnposta a 0 per disabilitare. Buffer più grandi garantiscono maggiore stabilità, ma aumentano la latenza degli effetti sonori."
             },
             "ShowTime": {
                 "Name": "Mostra Orario",
@@ -2083,12 +2161,12 @@
                     "Description": "Il rapporto tra la parte anteriore e posteriore della Hit Window. \"0\" porterà la finestra completamente all'indietro, \"1\" la terrà al centro, e \"2\" la sposterà davanti."
                 },
                 "LaneAutohitWindow": {
-                    "Name": "Lane Autohit Window",
-                    "Description": "This determines the minimum input speed that guarantees autohitting behavior in a lane, regardless of the speed of the notes within the lane."
+                    "Name": "Finestra Auto-colpimento Corsia",
+                    "Description": "Questo determina la velocità minima di input che garantisce il comportamento di auto-colpimento in una corsia, indipendentemente dalla velocità delle note all'interno della corsia."
                 },
                 "LaneProximityProtectionWindow": {
-                    "Name": "Lane Proximity Protection\nWindow",
-                    "Description": "This determines the window of time before and after a lane where overhitting is forgiven."
+                    "Name": "Finestra Protezione\nProssimità Corsia",
+                    "Description": "Questo determina la finestra di tempo prima e dopo una corsia dove viene perdonato il sovraccolpo."
                 },
                 "HitPercentE": {
                     "Name": "Percentuale di colpo (Facile)",
@@ -2188,7 +2266,7 @@
                 },
                 "EnableLanes": {
                     "Name": "Abilita Linee Trillo/Tremolo",
-                    "Description": "Se abilitato, il gioco rispetta le corsie tracciate trill/tremolo."
+                    "Description": "If enabled, the game honors charted trill/tremolo lanes."
                 }
             },
             "HighwayPreset": {
