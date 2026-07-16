@@ -87,6 +87,11 @@ namespace YARG.Menu.Main
             MenuManager.Instance.PushMenu(MenuManager.Menu.ProfileList);
         }
 
+        public void Content()
+        {
+            MenuManager.Instance.PushMenu(MenuManager.Menu.Content);
+        }
+
         public void Replays()
         {
             MenuManager.Instance.PushMenu(MenuManager.Menu.History);

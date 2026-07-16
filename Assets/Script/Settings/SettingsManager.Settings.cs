@@ -123,6 +123,7 @@ namespace YARG.Settings
             public ToggleSetting DisableGlobalBackgrounds  { get; } = new(false);
             public ToggleSetting DisablePerSongBackgrounds { get; } = new(false);
             public ToggleSetting WaitForSongVideo          { get; } = new(true);
+            public ToggleSetting AllowRemoteContent        { get; } = new(true);
 
 
             public SliderSetting InputPollingFrequency { get; } = new(250f, 60f, 1000f,
@@ -504,6 +505,21 @@ namespace YARG.Settings
             public void OpenExecutablePath()
             {
                 FileExplorerHelper.OpenFolder(PathHelper.ExecutablePath);
+            }
+
+            public async void RemoveRemoteContent()
+            {
+                // Pop confirmation dialog
+                DialogManager.Instance.ShowConfirmDeleteDialog("Are you sure you want to remove all cached content?\n\nRemote content you access will be redownloaded, possibly causing loading delays.",
+                    () =>
+                    {
+                        var result = Caching.ClearCache();
+                        if (!result)
+                        {
+                            YargLogger.LogWarning("Failed to clear some cached items.");
+                        }
+                    },
+                    "");
             }
 
             #endregion
