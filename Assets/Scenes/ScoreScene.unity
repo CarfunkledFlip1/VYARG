@@ -629,6 +629,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4748893067795282370, guid: c59fc90e5321ae644b1baecfad526036, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4748893068835228428, guid: c59fc90e5321ae644b1baecfad526036, type: 3}
       propertyPath: m_Name
       value: MenuBackground
@@ -647,7 +651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4748893068835228431, guid: c59fc90e5321ae644b1baecfad526036, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 6.7
       objectReference: {fileID: 0}
     - target: {fileID: 4748893068835228431, guid: c59fc90e5321ae644b1baecfad526036, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2101,7 +2105,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1731608351534815135}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
@@ -2133,7 +2137,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &1731608351534815123
 Canvas:
   m_ObjectHideFlags: 0
@@ -2143,7 +2147,7 @@ Canvas:
   m_GameObject: {fileID: 1731608351534815135}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -2165,8 +2169,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1731608351534815135}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 6.7}
+  m_LocalScale: {x: 0.007817604, y: 0.007817604, z: 0.007817604}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 651272592}
@@ -2179,8 +2183,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 2211.8545, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1731608351534815135
 GameObject:
   m_ObjectHideFlags: 0
@@ -2196,6 +2200,7 @@ GameObject:
   - component: {fileID: 1731608351534815136}
   - component: {fileID: 1731608351534815137}
   - component: {fileID: 1731608351534815138}
+  - component: {fileID: 1731608351534815139}
   m_Layer: 5
   m_Name: Score Screen
   m_TagString: Untagged
@@ -2225,6 +2230,8 @@ MonoBehaviour:
   _bandScoreNotSavedPill: {fileID: 202862751}
   _cardScrollRect: {fileID: 1251677025}
   _horizontalScrollRate: 30
+  _horizontalScrollDuration: 0.25
+  _horizontalScrollEase: 9
   _verticalScrollRate: 15
   _guitarCardPrefab: {fileID: 5926515049655832625, guid: 67a865c532a041040af79b1d10b9e981, type: 3}
   _drumsCardPrefab: {fileID: -2071408240334197186, guid: ed90c7135db69294fb83c178b9639d1d, type: 3}
@@ -2254,6 +2261,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d5a22ae6edb5042a3d027466ca40f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1731608351534815139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731608351534815135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7951c64acb0fa62458bf30a60089fe2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster
+  m_IgnoreReversedGraphics: 0
+  m_CheckFor2DOcclusion: 0
+  m_CheckFor3DOcclusion: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RaycastTriggerInteraction: 1
 --- !u!114 &2009606209404194469
 MonoBehaviour:
   m_ObjectHideFlags: 0
