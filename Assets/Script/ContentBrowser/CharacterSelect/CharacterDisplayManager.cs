@@ -14,6 +14,7 @@ using YARG.Localization;
 using YARG.Menu.Navigation;
 using YARG.Settings;
 using YARG.Settings.Customization;
+using YARG.Venue.Characters;
 
 namespace YARG.ContentBrowser.CharacterSelect
 {
@@ -45,7 +46,7 @@ namespace YARG.ContentBrowser.CharacterSelect
         private Transform _hiddenLocation;
 
         // We will have up to 3 characters displayed at once, plus one hidden
-        Podium[] _podiums = new Podium[4];
+        private readonly Podium[] _podiums = new Podium[4];
 
         private GameObject _instance;
 
@@ -91,7 +92,7 @@ namespace YARG.ContentBrowser.CharacterSelect
             // Set a navigation scheme
             if (_characters.Count > 0)
             {
-                Navigator.Instance.PushScheme(new NavigationScheme(new()
+                _ = Navigator.Instance.PushScheme(new NavigationScheme(new()
                 {
                     new NavigationScheme.Entry(MenuAction.Green, "Menu.Common.Confirm", Select),
                     new NavigationScheme.Entry(MenuAction.Red, "Menu.Common.Back", Exit),
@@ -101,14 +102,14 @@ namespace YARG.ContentBrowser.CharacterSelect
             }
             else
             {
-                Navigator.Instance.PushScheme(new NavigationScheme(new()
+                _ = Navigator.Instance.PushScheme(new NavigationScheme(new()
                 {
                     new NavigationScheme.Entry(MenuAction.Red, "Menu.Common.Back", Exit),
                     new NavigationScheme.Entry(MenuAction.Left, "Menu.Common.Scroll", Left),
                     new NavigationScheme.Entry(MenuAction.Right, "Menu.Common.Scroll", Right),
                 }, true));
-                _characterName.SetText(Localize.Key("Menu.Store.CharacterSelect.NoCharacters"));
-                _characterCredits.SetText(Localize.Key("Menu.Store.CharacterSelect.NoCharactersSubtext"));
+                _characterName.SetText(Localize.Key("Menu.Content.CharacterSelect.NoCharacters"));
+                _characterCredits.SetText(Localize.Key("Menu.Content.CharacterSelect.NoCharactersSubtext"));
             }
 
             // Instantiate some CharacterDisplays,
@@ -140,6 +141,48 @@ namespace YARG.ContentBrowser.CharacterSelect
             }
 
             UpdatePrimaryCharacter();
+        }
+
+        private void UpdateNavigationScheme()
+        {
+            if (_characters.Count == 0)
+            {
+                return;
+            }
+
+            Navigator.Instance.PopScheme();
+
+            var confirmEntry = new NavigationScheme.Entry(MenuAction.Green, "Menu.Common.Confirm", Select);
+            var unhideEntry = new NavigationScheme.Entry(MenuAction.Orange, "Menu.Content.CharacterSelect.Unhide", Unhide);
+            var hideEntry = new NavigationScheme.Entry(MenuAction.Orange, "Menu.Content.CharacterSelect.Hide", Hide);
+            var unsetEntry = new NavigationScheme.Entry(MenuAction.Orange, "Menu.Content.CharacterSelect.Unset", Unselect);
+
+            var navigationEntries = new List<NavigationScheme.Entry>
+            {
+                new (MenuAction.Red, "Menu.Common.Back", Exit),
+                new (MenuAction.Left, "Menu.Common.Scroll", Left),
+                new (MenuAction.Right, "Menu.Common.Scroll", Right),
+            };
+
+            if (_primaryCharacter != null)
+            {
+                navigationEntries.Insert(0, confirmEntry);
+
+                if (IsSelected(_primaryCharacter))
+                {
+                    navigationEntries.Insert(2, unsetEntry);
+                }
+                else if (IsHidden(_primaryCharacter))
+                {
+                    navigationEntries.Insert(2, unhideEntry);
+                }
+                else if (_primaryCharacter.IsAddressable)
+                {
+                    navigationEntries.Insert(2, hideEntry);
+                }
+            }
+
+            _ = Navigator.Instance.PushScheme(new NavigationScheme(navigationEntries, true));
         }
 
         private Transform GetDisplayLocation(int index)
@@ -201,9 +244,13 @@ namespace YARG.ContentBrowser.CharacterSelect
                 _characterName.SetText(selectedPodium.Name);
                 _characterCredits.SetText(selectedPodium.Credits);
 
-                if (SettingsManager.Settings.CustomVocalsCharacter.Value == _primaryCharacter.Identifier)
+                if (IsSelected(_primaryCharacter))
                 {
                     _spotlight.color = Color.gold;
+                }
+                else if (IsHidden(_primaryCharacter))
+                {
+                    _spotlight.color = Color.darkRed;
                 }
                 else
                 {
@@ -216,11 +263,26 @@ namespace YARG.ContentBrowser.CharacterSelect
                 _characterName.SetText(string.Empty);
                 _characterCredits.SetText(string.Empty);
             }
+
+            UpdateNavigationScheme();
         }
 
         private void Select()
         {
-            SettingsManager.Settings.CustomVocalsCharacter.Value = _primaryCharacter.Identifier;
+            var characterInfo = new CustomCharacterInfo
+            {
+                Source = _primaryCharacter.IsAddressable
+                    ? CustomCharacterSource.Addressable
+                    : CustomCharacterSource.File,
+                Identifier = _primaryCharacter.Identifier
+            };
+
+            if (SettingsManager.Settings.HiddenCharacters.Contains(characterInfo))
+            {
+                SettingsManager.Settings.HiddenCharacters.Remove(characterInfo);
+            }
+
+            SettingsManager.Settings.CustomCharacters[VenueCharacter.CharacterType.Vocals] = characterInfo;
 
             // Turn the spotlight gold or something
             _spotlight.DOColor(Color.gold, MOVE_DURATION * 0.333f);
@@ -234,6 +296,60 @@ namespace YARG.ContentBrowser.CharacterSelect
                     podium.SetLightColor(Color.white, MOVE_DURATION * 0.333f);
                 }
             }
+
+            UpdateNavigationScheme();
+        }
+
+        private void Unselect()
+        {
+            SettingsManager.Settings.CustomCharacters.Remove(VenueCharacter.CharacterType.Vocals);
+
+            _spotlight.DOColor(Color.white, MOVE_DURATION * 0.333f);
+            _podiums[1].SetLightColor(Color.white, MOVE_DURATION * 0.333f);
+
+            UpdateNavigationScheme();
+        }
+
+        private void Hide()
+        {
+            var characterInfo = new CustomCharacterInfo
+            {
+                Source = _primaryCharacter.IsAddressable
+                    ? CustomCharacterSource.Addressable
+                    : CustomCharacterSource.File,
+                Identifier = _primaryCharacter.Identifier,
+            };
+
+            if (!SettingsManager.Settings.HiddenCharacters.Contains(characterInfo))
+            {
+                SettingsManager.Settings.HiddenCharacters.Add(characterInfo);
+            }
+
+            _spotlight.DOColor(Color.darkRed, MOVE_DURATION * 0.333f);
+            _podiums[1].SetLightColor(Color.darkRed, MOVE_DURATION * 0.333f);
+
+            UpdateNavigationScheme();
+        }
+
+        private void Unhide()
+        {
+            var characterInfo = new CustomCharacterInfo
+            {
+                Source = _primaryCharacter.IsAddressable
+                    ? CustomCharacterSource.Addressable
+                    : CustomCharacterSource.File,
+                Identifier = _primaryCharacter.Identifier,
+            };
+
+            if (SettingsManager.Settings.HiddenCharacters.Contains(characterInfo))
+            {
+                SettingsManager.Settings.HiddenCharacters.Remove(characterInfo);
+            }
+
+            _spotlight.DOColor(Color.white, MOVE_DURATION * 0.333f);
+            _podiums[1].SetLightColor(Color.white, MOVE_DURATION * 0.333f);
+
+            UpdateNavigationScheme();
         }
 
         private void Right()
@@ -379,7 +495,7 @@ namespace YARG.ContentBrowser.CharacterSelect
 
                     author = authors.Count switch
                     {
-                        0 => Localize.Key("Menu.Store.CharacterSelect.UnspecifiedAuthor"),
+                        0 => Localize.Key("Menu.Content.CharacterSelect.UnspecifiedAuthor"),
                         1 => authors[0],
                         _ => string.Join(", ", authors)
                     };
@@ -387,7 +503,7 @@ namespace YARG.ContentBrowser.CharacterSelect
                 else
                 {
                     name = Path.GetFileNameWithoutExtension(file);
-                    author = Localize.Key("Menu.Store.CharacterSelect.UnspecifiedAuthor");
+                    author = Localize.Key("Menu.Content.CharacterSelect.UnspecifiedAuthor");
                 }
 
                 characters.Add(new CharacterInfo {
@@ -509,9 +625,13 @@ namespace YARG.ContentBrowser.CharacterSelect
                             {
                                 _characterName.SetText(nextPrimary.Name);
                                 _characterCredits.SetText(nextPrimary.Author);
-                                if (nextPrimary.Identifier == SettingsManager.Settings.CustomVocalsCharacter.Value)
+                                if (IsSelected(nextPrimary))
                                 {
                                     _spotlight.color = Color.gold;
+                                }
+                                else if (IsHidden(nextPrimary))
+                                {
+                                    _spotlight.color = Color.darkRed;
                                 }
                                 _spotlight.DOIntensity(SPOTLIGHT_INTENSITY, MOVE_DURATION * 0.333f);
                             }
@@ -545,6 +665,23 @@ namespace YARG.ContentBrowser.CharacterSelect
 
                 _podiums[i].transform.position = new Vector3(x, _podiums[i].transform.position.y, z);
             }
+        }
+
+        public static bool IsSelected(CharacterInfo characterInfo)
+        {
+            return SettingsManager.Settings.CustomCharacters.TryGetValue(VenueCharacter.CharacterType.Vocals, out var customInfo)
+                && customInfo.Identifier == characterInfo.Identifier;
+        }
+
+        public static bool IsHidden(CharacterInfo characterInfo)
+        {
+            var customInfo = new CustomCharacterInfo
+            {
+                Source = characterInfo.IsAddressable ? CustomCharacterSource.Addressable : CustomCharacterSource.File,
+                Identifier = characterInfo.Identifier
+            };
+
+            return SettingsManager.Settings.HiddenCharacters.Contains(customInfo);
         }
 
         private void OnDestroy()

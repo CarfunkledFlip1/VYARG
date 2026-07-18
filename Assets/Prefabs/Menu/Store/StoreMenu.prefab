@@ -355,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7666ce39360a4330a733067d9e66b929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _localizationKey: Menu.Store.MessageOfTheDay
+  _localizationKey: Menu.Content.MessageOfTheDay
 --- !u!222 &1765430749429375538
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -734,7 +734,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6366958812866603597, guid: 06cef68cf0efbb9409815fee1c1cb931, type: 3}
       propertyPath: _localizationKey
-      value: Menu.Store.Options.Back
+      value: Menu.Content.Options.Back
       objectReference: {fileID: 0}
     - target: {fileID: 7290593809168235268, guid: 06cef68cf0efbb9409815fee1c1cb931, type: 3}
       propertyPath: m_Color.b
@@ -952,7 +952,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6366958812866603597, guid: 06cef68cf0efbb9409815fee1c1cb931, type: 3}
       propertyPath: _localizationKey
-      value: Menu.Store.Options.Character
+      value: Menu.Content.Options.Character
       objectReference: {fileID: 0}
     - target: {fileID: 6961871736653160099, guid: 06cef68cf0efbb9409815fee1c1cb931, type: 3}
       propertyPath: m_text

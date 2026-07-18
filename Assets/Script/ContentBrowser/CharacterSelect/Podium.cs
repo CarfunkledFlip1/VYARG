@@ -80,9 +80,13 @@ namespace YARG.ContentBrowser.CharacterSelect
             Name = characterInfo.Name;
             Credits = characterInfo.Author;
 
-            if (SettingsManager.Settings.CustomVocalsCharacter.Value == characterInfo.Identifier)
+            if (CharacterDisplayManager.IsSelected(characterInfo))
             {
                 SetLightColor(Color.gold, 0f);
+            }
+            else if (CharacterDisplayManager.IsHidden(characterInfo))
+            {
+                SetLightColor(Color.darkRed, 0f);
             }
             else
             {
