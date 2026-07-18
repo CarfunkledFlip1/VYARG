@@ -698,8 +698,9 @@ namespace YARG.ContentBrowser.CharacterSelect
                 if (character.IsAddressable && character.Handle.IsValid())
                 {
                     Addressables.Release(character.Handle);
-                    character.Prefab = null;
                 }
+
+                character.Prefab = null;
             }
 
             foreach (var podium in _podiums)
@@ -709,6 +710,8 @@ namespace YARG.ContentBrowser.CharacterSelect
                     Destroy(podium.gameObject);
                 }
             }
+
+            Resources.UnloadUnusedAssets();
         }
     }
 }
