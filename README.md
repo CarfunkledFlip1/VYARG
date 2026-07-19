@@ -49,9 +49,8 @@ YARG (a.k.a. Yet Another Rhythm Game) is a free, open-source, plastic guitar gam
 
 - [👉 Disclaimer](#-disclaimer)
 - [📃 Table of Contents](#-table-of-contents)
+- [🥽 VR Support](#-vr-support)
 - [📥 Downloading and Playing](#-downloading-and-playing)
-  - [YARC Launcher (All Platforms)](#yarc-launcher-all-platforms)
-  - [Linux](#linux)
 - [🔨 Building/Contributing](#-buildingcontributing)
   - [Setup Instructions](#setup-instructions)
   - [Unity YAML Merge Tool](#unity-yaml-merge-tool)
@@ -61,49 +60,15 @@ YARG (a.k.a. Yet Another Rhythm Game) is a free, open-source, plastic guitar gam
 - [📦 External Assets and Libraries](#-external-assets-and-libraries)
 - [💸 Donate](#-donate)
 
+## 🥽 VR Support
+
+Currently the only headset that I can guarentee works with no issues is the Meta Quest 3. Other Meta Quest headsets (Quest 2, Quest 3s, etc.) will most likely work without issues however I have no guarentee that PCVR exclusive headsets (Valve Index, Pimax, etc.) will work due to Unity controller bindings. 
+
+If you would like to copy my setup exactly then you will want to use a Meta Quest 3 with Virtual Desktop and SteamVR set to the default OpenXR Runtime.
+
 ## 📥 Downloading and Playing
 
-**It is recommended you download YARG via the [YARC Launcher](https://github.com/YARC-Official/YARC-Launcher/releases/).** Downloading the portable option is not recommended as some features may not work.
-
-### YARC Launcher (All Platforms)
-
-> [!IMPORTANT]
-> If you are on Linux, there are some additional things you need to do in order for controllers to work. See the Linux section for more info.
-
-1. Go to the YARC Launcher releases page, [here](https://github.com/YARC-Official/YARC-Launcher/releases/).
-2. Click on the download option for your operating system.
-3. You may get a "this application is not safe" warning depending on your operating system. This is a false positive. [Click here](https://github.com/YARC-Official/YARC-Launcher#-antivirus-warnings) to learn more.
-4. Once in the launcher, click on "YARG" on the left hand side.
-5. Then, click on green "Update Stable" button.
-6. You will be prompted to choose an install folder. If you don't know what folder to choose, just click "Okay". Please ensure that the folder you select is empty.
-7. Wait for it to finish installing...
-8. Finally, press "Play Stable"!
-9. Additionally, if you want some songs, install "YARG Setlist" which is also on the left in the YARC Launcher.
-
-### Linux
-
-There are some dependencies that will be needed in order for HID devices (such as PS3 and Wii instruments) to work.
-
-1. Install `hidapi` and `libudev`:
-   - (Package names may differ depending on package repositories.)
-   - On apt-based distros (such as Ubuntu or Debian), use `sudo apt install libhidapi-hidraw0 libudev1`.
-   - On pacman-based distros (such as Arch Linux), use `pacman -S hidapi systemd-libs`.
-   - On Fedora, use `dnf install hidapi systemd-libs`.
-2. Finally, create a new udev rules file called `69-hid.rules` inside of `/etc/udev/rules.d/` or `/usr/lib/udev/rules.d/`, with the following contents:
-  ```
-  KERNEL=="hidraw*", TAG+="uaccess"
-  ```
-  - Without this file, YARG will not be able to access HID devices without special permissions such as being run with `sudo`, which is not recommended.
-  - The file name may differ if desired, but it must come before `73-seat-late.rules`!
-3. Reboot your system to apply the new udev rule, then you should be all good to go!
-
-For improved compatibility when using the XBOX 360 Wireless Adapter with Linux, create a new udev rules file called `99-yarg-libusb.rules` inside of `/etc/udev/rules.d/` or `/usr/lib/udev/rules.d/`, with the following contents:
-
-```
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="0291", MODE="0666"
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02a9", MODE="0666"
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="0719", MODE="0666"
-```
+Right now I dont have a build uploaded. If you would like to play the game as it is you will need to build it yourself. 
 
 ## 🔨 Building/Contributing
 
